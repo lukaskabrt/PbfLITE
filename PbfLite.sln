@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PbfLite", "src\PbfLite\PbfLite.csproj", "{41598744-013B-488C-BB2C-A6B90B4D361C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PbfLite", "src\PbfLite\PbfLite.csproj", "{41598744-013B-488C-BB2C-A6B90B4D361C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PbfLite.Tests", "src\PbfLite.Tests\PbfLite.Tests.csproj", "{4071F36C-F60F-4778-8BF4-2088F7922A0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{41598744-013B-488C-BB2C-A6B90B4D361C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41598744-013B-488C-BB2C-A6B90B4D361C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41598744-013B-488C-BB2C-A6B90B4D361C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4071F36C-F60F-4778-8BF4-2088F7922A0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4071F36C-F60F-4778-8BF4-2088F7922A0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4071F36C-F60F-4778-8BF4-2088F7922A0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4071F36C-F60F-4778-8BF4-2088F7922A0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
