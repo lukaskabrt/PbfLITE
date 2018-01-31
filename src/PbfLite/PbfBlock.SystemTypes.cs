@@ -24,7 +24,7 @@ namespace PbfLite {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int ReadSignedInt() {
-            return this.Zag(this.ReadVarint32());
+            return PbfBlock.Zag(this.ReadVarint32());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -39,7 +39,7 @@ namespace PbfLite {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long ReadSignedLong() {
-            return this.Zag(this.ReadVarint64());
+            return PbfBlock.Zag(this.ReadVarint64());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

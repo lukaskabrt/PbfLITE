@@ -24,6 +24,18 @@ namespace PbfLite {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Zag(uint ziggedValue) {
+            int value = (int)ziggedValue;
+            return (-(value & 0x01)) ^ ((value >> 1) & ~PbfBlock.Int32Msb);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long Zag(ulong ziggedValue) {
+            var value = (long)ziggedValue;
+            return (-(value & 0x01L)) ^ ((value >> 1) & ~PbfBlock.Int64Msb);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public (int fieldNumber, WireType wireType) ReadFieldHeader() {
             if (this.Position == this.Length) {
                 return (0, WireType.None);
@@ -40,7 +52,7 @@ namespace PbfLite {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SkipField(WireType wireType) {
             switch (wireType) {
-                case WireType.Variant:
+                case WireType.Variant: this.ReadVarint64(); break;
                 case WireType.Fixed32: this.Position += 4; break;
                 case WireType.Fixed64: this.Position += 8; break;
                 case WireType.String:
@@ -187,19 +199,6 @@ namespace PbfLite {
             var length = this.ReadVarint32();
             this.Position += (int)length;
             return this.Block.Slice(this.Position - (int)length, (int)length);
-        }
-
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int Zag(uint ziggedValue) {
-            int value = (int)ziggedValue;
-            return (-(value & 0x01)) ^ ((value >> 1) & ~PbfBlock.Int32Msb);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public long Zag(ulong ziggedValue) {
-            var value = (long)ziggedValue;
-            return (-(value & 0x01L)) ^ ((value >> 1) & ~PbfBlock.Int64Msb);
         }
     }
 }
