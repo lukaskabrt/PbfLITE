@@ -54,13 +54,13 @@ namespace PbfLite {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe float ReadSingle() {
-            var value = this.ReadVarint32();
+            var value = this.ReadFixed32();
             return *(float*)&value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe double ReadDouble() {
-            var value = this.ReadVarint64();
+            var value = this.ReadFixed64();
             return *(double*)&value;
         }
 

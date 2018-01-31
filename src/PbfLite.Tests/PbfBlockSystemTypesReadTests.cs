@@ -46,11 +46,65 @@ namespace PbfLite.Tests {
         [InlineData(new byte[] { 0x01 }, 1)]
         [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, -1)]
         [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x07 }, 2147483647)]
-        [InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0xF0, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, -2147483648)]
+        [InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0xF8, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, -2147483648)]
         private void ReadInt_ReadsVarintValues(byte[] data, int expectedNumber) {
             var block = PbfBlock.Create(data);
 
             var number = block.ReadInt();
+
+            Assert.Equal(expectedNumber, number);
+        }
+
+        [Theory]
+        [InlineData(new byte[] { 0x00 }, 0)]
+        [InlineData(new byte[] { 0x01 }, -1)]
+        [InlineData(new byte[] { 0x02 }, 1)]
+        [InlineData(new byte[] { 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, 9223372036854775807)]
+        [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, -9223372036854775808)]
+        private void ReadSignedLong_ReadsZiggedVarintValues(byte[] data, long expectedNumber) {
+            var block = PbfBlock.Create(data);
+
+            var number = block.ReadSignedLong();
+
+            Assert.Equal(expectedNumber, number);
+        }
+
+        [Theory]
+        [InlineData(new byte[] { 0x00 }, 0)]
+        [InlineData(new byte[] { 0x01 }, 1)]
+        [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, -1)]
+        [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F }, 9223372036854775807)]
+        [InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01 }, -9223372036854775808)]
+        private void ReadLong_ReadsVarintValues(byte[] data, long expectedNumber) {
+            var block = PbfBlock.Create(data);
+
+            var number = block.ReadLong();
+
+            Assert.Equal(expectedNumber, number);
+        }
+
+        [Theory]
+        [InlineData(new byte[] { 0x00, 0x00, 0x00, 0x00 }, 0)]
+        [InlineData(new byte[] { 0xC3, 0xF5, 0x48, 0x40 }, 3.14f)]
+        [InlineData(new byte[] { 0xF7, 0xCC, 0x12, 0x39 }, 0.00014f)]
+        [InlineData(new byte[] { 0x66, 0x80, 0x3B, 0x46 }, 12000.1f)]
+        private void ReadSingle_ReadsValues(byte[] data, float expectedNumber) {
+            var block = PbfBlock.Create(data);
+
+            var number = block.ReadSingle();
+
+            Assert.Equal(expectedNumber, number);
+        }
+
+        [Theory]
+        [InlineData(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, 0)]
+        [InlineData(new byte[] { 0x1F, 0x85, 0xEB, 0x51, 0xB8, 0x1E, 0x09, 0x40 }, 3.14)]
+        [InlineData(new byte[] { 0xD2, 0xFB, 0xC6, 0xD7, 0x9E, 0x59, 0x22, 0x3F }, 0.00014)]
+        [InlineData(new byte[] { 0xCD, 0xCC, 0xCC, 0xCC, 0x0C, 0x70, 0xC7, 0x40 }, 12000.1)]
+        private void ReadDouble_ReadsValues(byte[] data, double expectedNumber) {
+            var block = PbfBlock.Create(data);
+
+            var number = block.ReadDouble();
 
             Assert.Equal(expectedNumber, number);
         }
