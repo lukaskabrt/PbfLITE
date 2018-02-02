@@ -8,7 +8,8 @@ using PbfLite.Benchmark.ProtobufNet.Models;
 using ProtoBuf;
 
 namespace PbfLite.Benchmark {
-    [SimpleJob]
+    [SimpleJob(targetCount: 15)]
+    [MemoryDiagnoser]
     public class ReadTests {
         private byte[] _data;
         private MemoryStream _dataStream;
@@ -23,6 +24,12 @@ namespace PbfLite.Benchmark {
         public int ProtobufNetReadAddressBook() {
             _dataStream.Seek(0, SeekOrigin.Begin);
             var data = Serializer.Deserialize<AddressBook>(_dataStream);
+            return data.People.Count;
+        }
+
+        [Benchmark]
+        public int PbfLiteReadAddressBook() {
+            var data = PbfLite.AddressBookDeserializer.Deserialize(_data);
             return data.People.Count;
         }
     }
