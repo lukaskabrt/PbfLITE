@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
-using PbfLite.Benchmark.ProtobufNet.Models;
+using PbfLite.Benchmark.Models;
 
 namespace PbfLite.Benchmark.PbfLite {
     static class AddressBookDeserializer {
@@ -16,7 +16,7 @@ namespace PbfLite.Benchmark.PbfLite {
             var (fieldNumber, wireType) = data.ReadFieldHeader();
             while (fieldNumber != 0) {
                 switch (fieldNumber) {
-                    case 4: result.People.Add(DeserializePerson(PbfBlock.Create(data.ReadLengthPrefixedBytes()))); break;
+                    case 1: result.People.Add(DeserializePerson(PbfBlock.Create(data.ReadLengthPrefixedBytes()))); break;
                     default: data.SkipField(wireType); break;
                 }
 

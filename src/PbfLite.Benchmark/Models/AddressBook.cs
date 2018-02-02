@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ProtoBuf;
 
-namespace PbfLite.Benchmark.ProtobufNet.Models {
+namespace PbfLite.Benchmark.Models {
     [ProtoContract]
     public class Person {
         [ProtoMember(1, Name = "name")]

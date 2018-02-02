@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
-using PbfLite.Benchmark.ProtobufNet.Models;
-using ProtoBuf;
 
 namespace PbfLite.Benchmark {
     [SimpleJob(targetCount: 15)]
@@ -16,14 +15,26 @@ namespace PbfLite.Benchmark {
 
         [GlobalSetup]
         public void LoadData() {
-            _data = File.ReadAllBytes("c:\\Temp\\addressbook.bin");
-            _dataStream = new MemoryStream(_data);
+            var assembly = typeof(ReadTests).GetTypeInfo().Assembly;
+
+            _dataStream = new MemoryStream();
+            using (var stream = assembly.GetManifestResourceStream("PbfLite.Benchmark.Data.addressbook.bin")) {
+                stream.CopyTo(_dataStream);
+            }
+
+            _data = _dataStream.ToArray();
         }
 
         [Benchmark]
         public int ProtobufNetReadAddressBook() {
             _dataStream.Seek(0, SeekOrigin.Begin);
-            var data = Serializer.Deserialize<AddressBook>(_dataStream);
+            var data = ProtobufNet.AddressBookDeserializer.Deserialize(_dataStream);
+            return data.People.Count;
+        }
+
+        [Benchmark]
+        public int GoogleProtobufReadAddressBook() {
+            var data = GoogleProtobuf.AddressBook.Parser.ParseFrom(_data);
             return data.People.Count;
         }
 

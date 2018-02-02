@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using PbfLite.Benchmark.ProtobufNet.Models;
+using PbfLite.Benchmark.Models;
 using ProtoBuf;
 
 namespace PbfLite.Benchmark {
