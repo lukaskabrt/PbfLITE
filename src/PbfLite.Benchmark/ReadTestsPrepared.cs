@@ -9,7 +9,7 @@ using BenchmarkDotNet.Attributes.Jobs;
 namespace PbfLite.Benchmark {
     [SimpleJob()]
     [MemoryDiagnoser]
-    public class ReadTests {
+    public class ReadTestsPrepared {
         private byte[] _data;
         private MemoryStream _dataStream;
 
@@ -17,24 +17,14 @@ namespace PbfLite.Benchmark {
         public void LoadData() {
             _dataStream = TestsHelpers.LoadAddressBookData();
             _data = _dataStream.ToArray();
+
+            ProtoBuf.Serializer.PrepareSerializer<Models.AddressBook>();
         }
 
         [Benchmark]
-        public int ProtobufNetReadAddressBook() {
+        public int ProtobufNetReadAddressBookWithPreparedSerializer() {
             _dataStream.Seek(0, SeekOrigin.Begin);
             var data = ProtobufNet.AddressBookSerializer.Deserialize(_dataStream);
-            return data.People.Count;
-        }
-
-        [Benchmark]
-        public int GoogleProtobufReadAddressBook() {
-            var data = GoogleProtobuf.AddressBook.Parser.ParseFrom(_data);
-            return data.People.Count;
-        }
-
-        [Benchmark]
-        public int PbfLiteReadAddressBook() {
-            var data = PbfLite.AddressBookDeserializer.Deserialize(_data);
             return data.People.Count;
         }
     }
