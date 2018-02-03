@@ -6,6 +6,8 @@ namespace PbfLite.Benchmark {
         static void Main(string[] args) {
             BenchmarkRunner.Run<ReadTests>();
             BenchmarkRunner.Run<ReadTestsPrepared>();
+
+            BenchmarkRunner.Run<WriteTests>();
         }
     }
 }
