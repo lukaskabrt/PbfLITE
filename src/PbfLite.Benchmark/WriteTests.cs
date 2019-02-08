@@ -4,7 +4,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Attributes.Jobs;
 using Google.Protobuf;
 
 namespace PbfLite.Benchmark {

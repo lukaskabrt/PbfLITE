@@ -4,10 +4,9 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Attributes.Jobs;
 
 namespace PbfLite.Benchmark {
-    [SimpleJob()]
+    //[SimpleJob()]
     [MemoryDiagnoser]
     public class ReadTestsPrepared {
         private byte[] _data;
