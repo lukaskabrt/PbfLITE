@@ -67,8 +67,8 @@ public class PrimitivesReadBenchmarks
         {
             foreach (var testCase in Varint32TestCases)
             {
-                var buffer = new byte[testCase.Length * 100];
-                for (int i = 0; i < 100; i++)
+                var buffer = new byte[testCase.Length * 132];
+                for (int i = 0; i < 132; i++)
                 {
                     Buffer.BlockCopy(testCase, 0, buffer, i * testCase.Length, testCase.Length);
                 }

@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36202.13 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PbfLite", "src\PbfLite\PbfLite.csproj", "{41598744-013B-488C-BB2C-A6B90B4D361C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PbfLite.Tests", "src\PbfLite.Tests\PbfLite.Tests.csproj", "{4071F36C-F60F-4778-8BF4-2088F7922A0F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PbfLite.Benchmark", "src\PbfLite.Benchmark\PbfLite.Benchmark.csproj", "{F33692D0-1449-41FE-8859-117723AD3311}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workbench", "Workbench\Workbench.csproj", "{C7A10127-EC7A-4E45-ACAD-083BA910F2FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{F33692D0-1449-41FE-8859-117723AD3311}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F33692D0-1449-41FE-8859-117723AD3311}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F33692D0-1449-41FE-8859-117723AD3311}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7A10127-EC7A-4E45-ACAD-083BA910F2FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7A10127-EC7A-4E45-ACAD-083BA910F2FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7A10127-EC7A-4E45-ACAD-083BA910F2FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7A10127-EC7A-4E45-ACAD-083BA910F2FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
