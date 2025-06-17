@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Collections.Generic;
+using Xunit;
 
 namespace PbfLite.Tests.Generator;
 
@@ -50,13 +51,30 @@ namespace Test
             var expectedGeneratedCode =
 @"#nullable enable
 
+using PbfLite;
+
 namespace Test
 {
     public partial class TestType
     {
         public static TestType Deserialize(PbfBlock pbf)
         {
-            return new TestType();
+            var result = new TestType();
+
+            var (fieldNumber, wireType) = pbf.ReadFieldHeader();
+            while (fieldNumber != 0)
+            {
+                switch (fieldNumber)
+                {
+                    default:
+                        pbf.SkipField(wireType);
+                        break;
+                }
+
+                (fieldNumber, wireType) = pbf.ReadFieldHeader();
+            }
+
+            return result;
         }
     }
 }

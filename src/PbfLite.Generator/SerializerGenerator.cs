@@ -36,6 +36,7 @@ public class SerializerGenerator : IIncrementalGenerator
         // Get the full type name of the enum e.g. Colour, 
         // or OuterClass<T>.Colour if it was nested in a generic type (for example)
         var className = classSymbol.Name;
+        var classNamespace = classSymbol.ContainingNamespace.ToDisplayString();
 
         //// Get all the members in the enum
         //ImmutableArray<ISymbol> enumMembers = enumSymbol.GetMembers();
@@ -61,18 +62,20 @@ public class SerializerGenerator : IIncrementalGenerator
         //    }
         //}
 
-        return new PbfMessageSerializer(className);
+        return new PbfMessageSerializer(className, classNamespace);
     }
 
-    static void Execute(PbfMessageSerializer? enumToGenerate, SourceProductionContext context)
+    static void Execute(PbfMessageSerializer? serializer, SourceProductionContext context)
     {
-        if (enumToGenerate is { } value)
+        if (serializer == null)
         {
-            // generate the source code and add it to the output
-            string result = ""; //SourceGenerationHelper.GenerateExtensionClass(value);
-            // Create a separate partial class file for each enum
-            context.AddSource($"{value.TypeName}.PbfLite.g.cs", SourceText.From(result, Encoding.UTF8));
+            return;
         }
+
+        var builder = new SerializerBuilder(serializer);
+        var result = builder.Build();
+
+        context.AddSource(result.FileName, SourceText.From(result.SourceCode, Encoding.UTF8));
     }
 }
 
@@ -81,41 +84,45 @@ public static class SourceGenerationHelper
     public static string GenerateExtensionClass(PbfMessageSerializer enumToGenerate)
     {
         var sb = new StringBuilder();
-//        sb.Append(@"
-//namespace NetEscapades.EnumGenerators
-//{
-//    public static partial class EnumExtensions
-//    {");
-//        sb.Append(@"
-//            public static string ToStringFast(this ").Append(enumToGenerate.Name).Append(@" value)
-//                => value switch
-//                {");
-//        foreach (var member in enumToGenerate.Values)
-//        {
-//            sb.Append(@"
-//            ").Append(enumToGenerate.Name).Append('.').Append(member)
-//                .Append(" => nameof(")
-//                .Append(enumToGenerate.Name).Append('.').Append(member).Append("),");
-//        }
+        //        sb.Append(@"
+        //namespace NetEscapades.EnumGenerators
+        //{
+        //    public static partial class EnumExtensions
+        //    {");
+        //        sb.Append(@"
+        //            public static string ToStringFast(this ").Append(enumToGenerate.Name).Append(@" value)
+        //                => value switch
+        //                {");
+        //        foreach (var member in enumToGenerate.Values)
+        //        {
+        //            sb.Append(@"
+        //            ").Append(enumToGenerate.Name).Append('.').Append(member)
+        //                .Append(" => nameof(")
+        //                .Append(enumToGenerate.Name).Append('.').Append(member).Append("),");
+        //        }
 
-//        sb.Append(@"
-//                _ => value.ToString(),
-//            };
-//");
+        //        sb.Append(@"
+        //                _ => value.ToString(),
+        //            };
+        //");
 
-//        sb.Append(@"
-//    }
-//}");
+        //        sb.Append(@"
+        //    }
+        //}");
 
         return sb.ToString();
     }
 }
+
 public record class PbfMessageSerializer
 {
-    public readonly string TypeName;
+    public string TypeName { get; private set; }
 
-    public PbfMessageSerializer(string typeName)
+    public string Namespace { get; private set; }
+
+    public PbfMessageSerializer(string typeName, string @namespace)
     {
         TypeName = typeName;
+        Namespace = @namespace;
     }
 }
