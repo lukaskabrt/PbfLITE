@@ -1,10 +1,12 @@
 ﻿using System;
 
-namespace PbfLite;
+namespace PbfLite.Contracts
+{
 
-/// <summary>
-/// Marks target type for generation of Pbf serializer.
-/// </summary>
-[AttributeUsage(AttributeTargets.Class)]
-internal sealed class PbfMessageAttribute : Attribute
-{}
+    /// <summary>
+    /// Marks target type for generation of Pbf serializer.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class)]
+    public sealed class PbfMessageAttribute : Attribute
+    { }
+}

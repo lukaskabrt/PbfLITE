@@ -48,7 +48,7 @@ namespace PbfLite {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ulong ReadULongint() {
+        public ulong ReadULong() {
             return this.ReadVarint64();
         }
 

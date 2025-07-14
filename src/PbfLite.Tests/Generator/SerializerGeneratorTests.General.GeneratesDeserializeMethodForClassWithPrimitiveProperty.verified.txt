@@ -1,0 +1,32 @@
+﻿#nullable enable
+
+using PbfLite;
+
+namespace Test
+{
+    public partial class TestType
+    {
+        public static TestType Deserialize(PbfBlock pbf)
+        {
+            var result = new TestType();
+
+            var (fieldNumber, wireType) = pbf.ReadFieldHeader();
+            while (fieldNumber != 0)
+            {
+                switch (fieldNumber)
+                {
+                    case 1:
+                        result.IntProperty = pbf.ReadInt();
+                        break;
+                    default:
+                        pbf.SkipField(wireType);
+                        break;
+                }
+
+                (fieldNumber, wireType) = pbf.ReadFieldHeader();
+            }
+
+            return result;
+        }
+    }
+}

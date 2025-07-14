@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36203.30 d17.14
+VisualStudioVersion = 17.14.36203.30
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PbfLite", "src\PbfLite\PbfLite.csproj", "{41598744-013B-488C-BB2C-A6B90B4D361C}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PbfLite.Benchmark", "src\PbfLite.Benchmark\PbfLite.Benchmark.csproj", "{F33692D0-1449-41FE-8859-117723AD3311}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PbfLite.Generator", "src\PbfLite.Generator\PbfLite.Generator.csproj", "{72BA27C7-AA01-49AB-AB39-9A502319BC59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PbfLite.Contracts", "PbfLite.Contracts\PbfLite.Contracts.csproj", "{29349F12-7A7E-42BE-ACB6-99754FAB6EDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{72BA27C7-AA01-49AB-AB39-9A502319BC59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72BA27C7-AA01-49AB-AB39-9A502319BC59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72BA27C7-AA01-49AB-AB39-9A502319BC59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29349F12-7A7E-42BE-ACB6-99754FAB6EDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29349F12-7A7E-42BE-ACB6-99754FAB6EDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29349F12-7A7E-42BE-ACB6-99754FAB6EDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29349F12-7A7E-42BE-ACB6-99754FAB6EDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

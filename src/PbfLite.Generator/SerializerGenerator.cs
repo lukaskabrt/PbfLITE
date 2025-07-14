@@ -1,6 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PbfLite.Generator;
@@ -12,7 +14,7 @@ public class SerializerGenerator : IIncrementalGenerator
     {
         IncrementalValuesProvider<PbfMessageSerializer?> serializersToGenerate = context.SyntaxProvider
             .ForAttributeWithMetadataName(
-                "PbfLite.PbfMessageAttribute",
+                "PbfLite.Contracts.PbfMessageAttribute",
                 predicate: static (s, _) => true,
                 transform: static (ctx, _) => GetSerializerToGenerate(ctx.SemanticModel, ctx.TargetNode))
             .Where(static m => m is not null);
@@ -22,9 +24,7 @@ public class SerializerGenerator : IIncrementalGenerator
         // Generate source code for each enum found
         context.RegisterSourceOutput(serializersToGenerate,
             static (spc, source) => Execute(source, spc));
-    }
-
-    static PbfMessageSerializer? GetSerializerToGenerate(SemanticModel semanticModel, SyntaxNode enumDeclarationSyntax)
+    }    static PbfMessageSerializer? GetSerializerToGenerate(SemanticModel semanticModel, SyntaxNode enumDeclarationSyntax)
     {
         // Get the semantic representation of the enum syntax
         if (semanticModel.GetDeclaredSymbol(enumDeclarationSyntax) is not INamedTypeSymbol classSymbol)
@@ -33,36 +33,58 @@ public class SerializerGenerator : IIncrementalGenerator
             return null;
         }
 
-        // Get the full type name of the enum e.g. Colour, 
-        // or OuterClass<T>.Colour if it was nested in a generic type (for example)
         var className = classSymbol.Name;
         var classNamespace = classSymbol.ContainingNamespace.ToDisplayString();
 
-        //// Get all the members in the enum
-        //ImmutableArray<ISymbol> enumMembers = enumSymbol.GetMembers();
-        //var members = new List<string>(enumMembers.Length);
+        // Get all properties with PbfMember attribute
+        var properties = new List<PbfMemberProperty>();
+        
+        foreach (var member in classSymbol.GetMembers())
+        {
+            if (member is IPropertySymbol property)
+            {
+                var pbfMemberAttribute = property.GetAttributes()
+                    .FirstOrDefault(attr => attr.AttributeClass?.Name == "PbfMemberAttribute" || attr.AttributeClass?.Name == "PbfMember");
 
-        //// Get all the fields from the enum, and add their name to the list
-        //foreach (ISymbol member in enumMembers)
-        //{
-        //    if (member is IFieldSymbol field && field.ConstantValue is not null)
-        //    {
-        //        members.Add(member.Name);
-        //    }
-        //}
+                if (pbfMemberAttribute != null)
+                {
+                    // PbfMemberAttribute must have 1 constructor argument - field number
+                    if (pbfMemberAttribute.ConstructorArguments.Length != 1)
+                    {
+                        continue;
+                    }
 
-        //// Create an EnumToGenerate for use in the generation phase
-        //enumsToGenerate.Add(new EnumToGenerate(enumName, members));
+                    var fieldNumberValue = pbfMemberAttribute.ConstructorArguments[0].Value;
+                    if (fieldNumberValue is not int fieldNumber)
+                    {
+                        continue;
+                    }
 
-        //foreach (ISymbol member in enumMembers)
-        //{
-        //    if (member is IFieldSymbol field && field.ConstantValue is not null)
-        //    {
-        //        members.Add(member.Name);
-        //    }
-        //}
+                    var attributeValues = new Dictionary<string, object?>();
+                    
+                    // Extract named arguments from the attribute
+                    foreach (var namedArgument in pbfMemberAttribute.NamedArguments)
+                    {
+                        attributeValues[namedArgument.Key] = namedArgument.Value.Value;
+                    }
+                    
+                    // Extract constructor arguments from the attribute
+                    for (int i = 0; i < pbfMemberAttribute.ConstructorArguments.Length; i++)
+                    {
+                        var constructorArg = pbfMemberAttribute.ConstructorArguments[i];
+                        var parameterName = pbfMemberAttribute.AttributeConstructor?.Parameters[i].Name ?? $"Arg{i}";
+                        attributeValues[parameterName] = constructorArg.Value;
+                    }
+                    
+                    properties.Add(new PbfMemberProperty(
+                        property.Name,
+                        property.Type.ToDisplayString(),
+                        fieldNumber));
+                }
+            }
+        }
 
-        return new PbfMessageSerializer(className, classNamespace);
+        return new PbfMessageSerializer(className, classNamespace, properties);
     }
 
     static void Execute(PbfMessageSerializer? serializer, SourceProductionContext context)
@@ -79,50 +101,32 @@ public class SerializerGenerator : IIncrementalGenerator
     }
 }
 
-public static class SourceGenerationHelper
-{
-    public static string GenerateExtensionClass(PbfMessageSerializer enumToGenerate)
-    {
-        var sb = new StringBuilder();
-        //        sb.Append(@"
-        //namespace NetEscapades.EnumGenerators
-        //{
-        //    public static partial class EnumExtensions
-        //    {");
-        //        sb.Append(@"
-        //            public static string ToStringFast(this ").Append(enumToGenerate.Name).Append(@" value)
-        //                => value switch
-        //                {");
-        //        foreach (var member in enumToGenerate.Values)
-        //        {
-        //            sb.Append(@"
-        //            ").Append(enumToGenerate.Name).Append('.').Append(member)
-        //                .Append(" => nameof(")
-        //                .Append(enumToGenerate.Name).Append('.').Append(member).Append("),");
-        //        }
-
-        //        sb.Append(@"
-        //                _ => value.ToString(),
-        //            };
-        //");
-
-        //        sb.Append(@"
-        //    }
-        //}");
-
-        return sb.ToString();
-    }
-}
-
 public record class PbfMessageSerializer
 {
     public string TypeName { get; private set; }
 
     public string Namespace { get; private set; }
+    
+    public List<PbfMemberProperty> Properties { get; private set; }
 
-    public PbfMessageSerializer(string typeName, string @namespace)
+    public PbfMessageSerializer(string typeName, string @namespace, List<PbfMemberProperty> properties)
     {
         TypeName = typeName;
         Namespace = @namespace;
+        Properties = properties;
+    }
+}
+
+public record class PbfMemberProperty
+{
+    public string Name { get; set; }
+    public string TypeName { get; set; }
+    public int FieldNumber { get; set; }
+    
+    public PbfMemberProperty(string name, string typeName, int fieldNumber)
+    {
+        Name = name;
+        TypeName = typeName;
+        FieldNumber = fieldNumber;
     }
 }

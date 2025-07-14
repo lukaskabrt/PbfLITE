@@ -12,6 +12,7 @@ public partial class SerializerGeneratorTests
         {
             // Given
             var sourceCode =
+            #region
 @"#nullable enable
 
 namespace Test
@@ -21,6 +22,7 @@ namespace Test
         public string StringProperty { get; set; }
     }
 }";
+            #endregion
 
             // When
             var result = GenerateSources(sourceCode);
@@ -31,13 +33,14 @@ namespace Test
         }
 
         [Fact]
-        public void GeneratesEmptyDeserializeMethodForClassWithMarkerAttribute()
+        public Task GeneratesEmptyDeserializeMethod_IfClassDoesNotContainAnyProperty()
         {
             // Given
             var sourceCode =
+            #region
 @"#nullable enable
 
-using PbfLite;
+using PbfLite.Contracts;
 
 namespace Test
 {
@@ -47,43 +50,60 @@ namespace Test
         public string StringProperty { get; set; }
     }
 }";
+            #endregion
 
-            var expectedGeneratedCode =
-@"#nullable enable
-
-using PbfLite;
-
-namespace Test
-{
-    public partial class TestType
-    {
-        public static TestType Deserialize(PbfBlock pbf)
-        {
-            var result = new TestType();
-
-            var (fieldNumber, wireType) = pbf.ReadFieldHeader();
-            while (fieldNumber != 0)
-            {
-                switch (fieldNumber)
-                {
-                    default:
-                        pbf.SkipField(wireType);
-                        break;
-                }
-
-                (fieldNumber, wireType) = pbf.ReadFieldHeader();
-            }
-
-            return result;
-        }
-    }
-}
-";
             // When
             var result = GenerateSources(sourceCode);
 
             // Then
-            AssertContainsSource("TestType.PbfLite.g.cs", expectedGeneratedCode, result);
+            return VerifySourceFile("TestType.PbfLite.g.cs", result);
+        }
+
+        [Fact]
+        public Task GeneratesDeserializeMethodForBuildInPrimitiveProperties()
+        {
+            // Given
+            var sourceCode =
+            #region
+@"#nullable enable
+
+using PbfLite.Contracts;
+using System;
+
+namespace Test
+{
+    [PbfMessage]
+    public partial class TestType
+    {
+        [PbfMember(1)]
+        public int IntProperty { get; set; }
+
+        [PbfMember(2)]
+        public uint UIntProperty { get; set; }
+
+        [PbfMember(3)]
+        public long LongProperty { get; set; }
+
+        [PbfMember(4)]
+        public ulong UIntProperty { get; set; }
+
+        [PbfMember(5)]
+        public float FloatProperty { get; set; }
+
+        [PbfMember(6)]
+        public double DoubleProperty { get; set; }
+
+        [PbfMember(7)]
+        public bool BoolProperty { get; set; }
+    }
+}";
+            #endregion
+
+            // When
+            var result = GenerateSources(sourceCode);
+
+            // Then
+            return VerifySourceFile("TestType.PbfLite.g.cs", result);
         }
     }
 }

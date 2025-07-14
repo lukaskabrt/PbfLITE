@@ -69,10 +69,14 @@ internal class SerializerBuilder
 
                 WriteBlock(() =>
                 {
-                    //foreach (var field in _serializer.Fields)
-                    //{
-                    //    WriteIntended($"case {field.FieldNumber}: result.{field.PropertyName} = pbf.Read{field.Type}();").AppendLine();
-                    //}
+                    foreach (var property in _serializer.Properties)
+                    {
+                        WriteSwitchCase(property.FieldNumber.ToString(), () =>
+                        {
+                            WritePropertyReader(property);
+                        });
+                    }
+
                     WriteSwitchCase("default", () =>
                     {
                         WriteIntendedLine("pbf.SkipField(wireType);");
@@ -133,6 +137,24 @@ internal class SerializerBuilder
     {
         _builder.Append(new string(' ', _indentLevel * 4)).AppendLine(line);
         return _builder;
+    }
+
+    private void WritePropertyReader(PbfMemberProperty property)
+    {
+        var readMethod = property.TypeName switch
+        {
+            "bool" => "ReadBoolean",
+            "int" => "ReadInt",
+            "uint" => "ReadUint",
+            "long" => "ReadLong",
+            "ulong" => "ReadULong",
+            "float" => "ReadSingle",
+            "double" => "ReadDouble",
+            _ => property.TypeName
+        };
+
+        WriteIntendedLine($"result.{property.Name} = pbf.{readMethod}();");
+        WriteIntendedLine("break;");
     }
 }
 
