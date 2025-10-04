@@ -67,7 +67,7 @@ public ref partial struct PbfBlock
     {
         switch (wireType)
         {
-            case WireType.Variant: ReadVarint64(); break;
+            case WireType.Varint: ReadVarint64(); break;
             case WireType.Fixed32: _position += 4; break;
             case WireType.Fixed64: _position += 8; break;
             case WireType.String:
@@ -277,7 +277,17 @@ public ref partial struct PbfBlock
     public Span<byte> ReadLengthPrefixedBytes()
     {
         var length = ReadVarint32();
+
         _position += (int)length;
         return _block.Slice(_position - (int)length, (int)length);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteLengthPrefixedBytes(ReadOnlySpan<byte> data)
+    {
+        WriteVarint32((uint)data.Length);
+
+        data.CopyTo(_block[_position..]);
+        _position += data.Length;
     }
 }

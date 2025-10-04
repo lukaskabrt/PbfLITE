@@ -1,16 +1,6 @@
-using System;
 using Xunit;
 
 namespace PbfLite.Tests;
-
-public static class SpanAssert
-{
-    public static void Equal(ReadOnlySpan<byte> expected, ReadOnlySpan<byte> actual)
-    {
-        Assert.True(expected.SequenceEqual(actual),
-            $"Expected: [{string.Join(", ", expected.ToArray())}], Actual: [{string.Join(", ", actual.ToArray())}]");
-    }
-}
 
 public class PbfBlockPrimitivesWritesTests
 {
@@ -22,7 +12,7 @@ public class PbfBlockPrimitivesWritesTests
     [InlineData(65536, new byte[] { 0x00, 0x00, 0x01, 0x00 })]
     [InlineData(16777216, new byte[] { 0x00, 0x00, 0x00, 0x01 })]
     [InlineData(4294967295, new byte[] { 0xFF, 0xFF, 0xFF, 0xFF })]
-    public void ReadFixed32_WritesNumbers(uint number, byte[] expectedData)
+    public void WriteFixed32_WritesNumbers(uint number, byte[] expectedData)
     {
         var buffer = new byte[4];
         var block = PbfBlock.Create(buffer);
@@ -92,14 +82,18 @@ public class PbfBlockPrimitivesWritesTests
         SpanAssert.Equal(expectedData, block.Block);
     }
 
-    //[Fact]
-    //public void ReadLengthPrefixedBytes_ReadsData()
-    //{
-    //    var block = PbfBlock.Create([0x03, 0x41, 0x42, 0x43]);
+    [Fact]
+    public void WriteLengthPrefixedBytes_WritesPrefixAndData()
+    {
+        var data = new byte[] { 0x41, 0x42, 0x43 };
+        var expected = new byte[] { 0x03, 0x41, 0x42, 0x43 };
 
-    //    var data = block.ReadLengthPrefixedBytes();
+        var buffer = new byte[4];
+        var block = PbfBlock.Create(buffer);
 
-    //    Assert.Equal(new byte[] { 0x41, 0x42, 0x43 }, data.ToArray());
-    //}
+        block.WriteLengthPrefixedBytes(data);
+
+        SpanAssert.Equal(expected, block.Block);
+    }
 
 }

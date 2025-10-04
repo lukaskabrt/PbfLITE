@@ -16,7 +16,7 @@ public enum WireType {
     /// <summary>
     /// Base-128 variant-length encoding
     /// </summary>
-    Variant = 0,
+    Varint = 0,
 
     /// <summary>
     /// Fixed-length 8-byte encoding
@@ -24,7 +24,7 @@ public enum WireType {
     Fixed64 = 1,
 
     /// <summary>
-    /// Length-variant-prefixed encoding
+    /// Length-varint-prefixed encoding
     /// </summary>
     String = 2,
 
