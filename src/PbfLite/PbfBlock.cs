@@ -15,7 +15,7 @@ public ref partial struct PbfBlock
 
     public readonly int Position => _position;
 
-    public readonly int Length => _block.Length;
+    public Span<byte> Block => _block.Slice(0, _position);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PbfBlock Create(Span<byte> block)
@@ -46,7 +46,7 @@ public ref partial struct PbfBlock
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public (int fieldNumber, WireType wireType) ReadFieldHeader()
     {
-        if (Position == Length)
+        if (_position == _block.Length)
         {
             return (0, WireType.None);
         }
@@ -86,6 +86,28 @@ public ref partial struct PbfBlock
             | (((uint)_block[_position++]) << 8)
             | (((uint)_block[_position++]) << 16)
             | (((uint)_block[_position++]) << 24);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteFixed32(uint value)
+    {
+        _block[_position++] = (byte)(value & 0xFF);
+        _block[_position++] = (byte)((value >> 8) & 0xFF);
+        _block[_position++] = (byte)((value >> 16) & 0xFF);
+        _block[_position++] = (byte)((value >> 24) & 0xFF);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteFixed64(ulong value)
+    {
+        _block[_position++] = (byte)(value & 0xFF);
+        _block[_position++] = (byte)((value >> 8) & 0xFF);
+        _block[_position++] = (byte)((value >> 16) & 0xFF);
+        _block[_position++] = (byte)((value >> 24) & 0xFF);
+        _block[_position++] = (byte)((value >> 32) & 0xFF);
+        _block[_position++] = (byte)((value >> 40) & 0xFF);
+        _block[_position++] = (byte)((value >> 48) & 0xFF);
+        _block[_position++] = (byte)((value >> 56) & 0xFF);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
