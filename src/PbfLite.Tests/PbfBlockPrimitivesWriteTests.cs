@@ -3,6 +3,15 @@ using Xunit;
 
 namespace PbfLite.Tests;
 
+public static class SpanAssert
+{
+    public static void Equal(ReadOnlySpan<byte> expected, ReadOnlySpan<byte> actual)
+    {
+        Assert.True(expected.SequenceEqual(actual),
+            $"Expected: [{string.Join(", ", expected.ToArray())}], Actual: [{string.Join(", ", actual.ToArray())}]");
+    }
+}
+
 public class PbfBlockPrimitivesWritesTests
 {
     [Theory]
@@ -20,12 +29,7 @@ public class PbfBlockPrimitivesWritesTests
 
         block.WriteFixed32(number);
 
-        Assert.Collection(buffer,
-            b0 => Assert.Equal(expectedData[0], b0),
-            b1 => Assert.Equal(expectedData[1], b1),
-            b2 => Assert.Equal(expectedData[2], b2),
-            b3 => Assert.Equal(expectedData[3], b3)
-        );
+        SpanAssert.Equal(expectedData, block.Block);
     }
 
     [Theory]
@@ -41,16 +45,27 @@ public class PbfBlockPrimitivesWritesTests
 
         block.WriteFixed64(number);
 
-        Assert.Collection(buffer,
-            b0 => Assert.Equal(expectedData[0], b0),
-            b1 => Assert.Equal(expectedData[1], b1),
-            b2 => Assert.Equal(expectedData[2], b2),
-            b3 => Assert.Equal(expectedData[3], b3),
-            b4 => Assert.Equal(expectedData[4], b4),
-            b5 => Assert.Equal(expectedData[5], b5),
-            b6 => Assert.Equal(expectedData[6], b6),
-            b7 => Assert.Equal(expectedData[7], b7)
-        );
+        SpanAssert.Equal(expectedData, block.Block);
+    }
+
+    [Theory]
+    [InlineData(0, new byte[] { 0x00 })]    
+    [InlineData(1, new byte[] { 0x01 })]
+    [InlineData(127, new byte[] { 0x7F })]
+    [InlineData(128, new byte[] { 0x80, 0x01 })]
+    [InlineData(16384, new byte[] { 0x80, 0x80, 0x01 })]
+    [InlineData(2097152, new byte[] { 0x80, 0x80, 0x80, 0x01 })]
+    [InlineData(268435456, new byte[] { 0x80, 0x80, 0x80, 0x80, 0x01 })]
+    [InlineData(4294967295, new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x0F })]
+    public void WriteVarint32_WritesNumbers(uint number, byte[] expectedData)
+    {
+        // Maximum 5 bytes for a 32-bit varint
+        var buffer = new byte[5]; 
+        var block = PbfBlock.Create(buffer);
+
+        block.WriteVarint32(number);
+
+        SpanAssert.Equal(expectedData, block.Block);
     }
 
     //[Fact]

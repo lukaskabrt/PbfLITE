@@ -98,19 +98,6 @@ public ref partial struct PbfBlock
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteFixed64(ulong value)
-    {
-        _block[_position++] = (byte)(value & 0xFF);
-        _block[_position++] = (byte)((value >> 8) & 0xFF);
-        _block[_position++] = (byte)((value >> 16) & 0xFF);
-        _block[_position++] = (byte)((value >> 24) & 0xFF);
-        _block[_position++] = (byte)((value >> 32) & 0xFF);
-        _block[_position++] = (byte)((value >> 40) & 0xFF);
-        _block[_position++] = (byte)((value >> 48) & 0xFF);
-        _block[_position++] = (byte)((value >> 56) & 0xFF);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ulong ReadFixed64()
     {
         return ((ulong)_block[_position++])
@@ -121,6 +108,19 @@ public ref partial struct PbfBlock
             | (((ulong)_block[_position++]) << 40)
             | (((ulong)_block[_position++]) << 48)
             | (((ulong)_block[_position++]) << 56);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteFixed64(ulong value)
+    {
+        _block[_position++] = (byte)(value & 0xFF);
+        _block[_position++] = (byte)((value >> 8) & 0xFF);
+        _block[_position++] = (byte)((value >> 16) & 0xFF);
+        _block[_position++] = (byte)((value >> 24) & 0xFF);
+        _block[_position++] = (byte)((value >> 32) & 0xFF);
+        _block[_position++] = (byte)((value >> 40) & 0xFF);
+        _block[_position++] = (byte)((value >> 48) & 0xFF);
+        _block[_position++] = (byte)((value >> 56) & 0xFF);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -172,6 +172,17 @@ public ref partial struct PbfBlock
         }
 
         throw new InvalidOperationException("Malformed  VarInt");
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteVarint32(uint value)
+    {
+        while (value >= 0x80)
+        {
+            _block[_position++] = (byte)(value | 0x80);
+            value >>= 7;
+        }
+        _block[_position++] = (byte)value;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
