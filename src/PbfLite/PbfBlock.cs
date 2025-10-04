@@ -263,6 +263,17 @@ public ref partial struct PbfBlock
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteVarint64(ulong value)
+    {
+        while (value >= 0x80)
+        {
+            _block[_position++] = (byte)(value | 0x80);
+            value >>= 7;
+        }
+        _block[_position++] = (byte)value;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<byte> ReadLengthPrefixedBytes()
     {
         var length = ReadVarint32();

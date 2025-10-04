@@ -68,6 +68,30 @@ public class PbfBlockPrimitivesWritesTests
         SpanAssert.Equal(expectedData, block.Block);
     }
 
+    [Theory]
+    [InlineData(0, new byte[] { 0x00 })]    
+    [InlineData(1, new byte[] { 0x01 })]
+    [InlineData(127, new byte[] { 0x7F })]
+    [InlineData(128, new byte[] { 0x80, 0x01 })]
+    [InlineData(16384, new byte[] { 0x80, 0x80, 0x01 })]
+    [InlineData(2097152, new byte[] { 0x80, 0x80, 0x80, 0x01 })]
+    [InlineData(268435456, new byte[] { 0x80, 0x80, 0x80, 0x80, 0x01 })]
+    [InlineData(34359738368UL, new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x01 })]
+    [InlineData(4398046511104UL, new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01 })]
+    [InlineData(562949953421312UL, new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01 })]
+    [InlineData(72057594037927936UL, new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01 })]
+    [InlineData(18446744073709551615UL, new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 })]
+    public void WriteVarint64_WritesNumbers(ulong number, byte[] expectedData)
+    {
+        // Maximum 10 bytes for a 64-bit varint
+        var buffer = new byte[10]; 
+        var block = PbfBlock.Create(buffer);
+
+        block.WriteVarint64(number);
+
+        SpanAssert.Equal(expectedData, block.Block);
+    }
+
     //[Fact]
     //public void ReadLengthPrefixedBytes_ReadsData()
     //{
@@ -78,43 +102,4 @@ public class PbfBlockPrimitivesWritesTests
     //    Assert.Equal(new byte[] { 0x41, 0x42, 0x43 }, data.ToArray());
     //}
 
-    //[Theory]
-    //[InlineData(new byte[] { 0x00 }, 0)]
-    //[InlineData(new byte[] { 0x01 }, 1)]
-    //[InlineData(new byte[] { 0x7F }, 127)]
-    //[InlineData(new byte[] { 0x80, 0x01 }, 128)]
-    //[InlineData(new byte[] { 0x80, 0x80, 0x01 }, 16384)]
-    //[InlineData(new byte[] { 0x80, 0x80, 0x80, 0x01 }, 2097152)]
-    //[InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0x01 }, 268435456)]
-    //[InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x0F }, 4294967295)]
-    //public void ReadVarint32_ReadsNumbers(byte[] data, uint expectedNumber)
-    //{
-    //    var block = PbfBlock.Create(data);
-
-    //    var number = block.ReadVarint32();
-
-    //    Assert.Equal(expectedNumber, number);
-    //}
-
-    //[Theory]
-    //[InlineData(new byte[] { 0x00 }, 0)]
-    //[InlineData(new byte[] { 0x01 }, 1)]
-    //[InlineData(new byte[] { 0x7F }, 127)]
-    //[InlineData(new byte[] { 0x80, 0x01 }, 128)]
-    //[InlineData(new byte[] { 0x80, 0x80, 0x01 }, 16384)]
-    //[InlineData(new byte[] { 0x80, 0x80, 0x80, 0x01 }, 2097152)]
-    //[InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0x01 }, 268435456)]
-    //[InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x01 }, 34359738368UL)]
-    //[InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01 }, 4398046511104UL)]
-    //[InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01 }, 562949953421312UL)]
-    //[InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01 }, 72057594037927936UL)]
-    //[InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, 18446744073709551615UL)]
-    //public void ReadVarint64_ReadsNumbers(byte[] data, ulong expectedNumber)
-    //{
-    //    var block = PbfBlock.Create(data);
-
-    //    var number = block.ReadVarint64();
-
-    //    Assert.Equal(expectedNumber, number);
-    //}
 }
