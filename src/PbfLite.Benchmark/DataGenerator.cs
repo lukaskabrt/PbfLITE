@@ -20,7 +20,7 @@ public class DataGenerator
     {
         var book = new AddressBook()
         {
-            People = this.GeneratePeople()
+            People = GeneratePeople()
         };
 
         using (var stream = new MemoryStream())
@@ -32,7 +32,7 @@ public class DataGenerator
 
     public void GenerateAddressBook(string filename)
     {
-        File.WriteAllBytes(filename, this.GenerateAddressBook());
+        File.WriteAllBytes(filename, GenerateAddressBook());
     }
 
     private Person[] GeneratePeople()
@@ -44,9 +44,9 @@ public class DataGenerator
             people[i] = new Person()
             {
                 ID = _random.Next(),
-                Name = $"{this.GenerateRandomString(8)} {this.GenerateRandomString(10)}",
-                Email = $"{this.GenerateRandomString(20)}@{this.GenerateRandomString(8)}.{this.GenerateRandomString(4)}",
-                Phones = this.GeneratePhones()
+                Name = $"{GenerateRandomString(8)} {GenerateRandomString(10)}",
+                Email = $"{GenerateRandomString(20)}@{GenerateRandomString(8)}.{GenerateRandomString(4)}",
+                Phones = GeneratePhones()
             };
         }
 
@@ -62,7 +62,7 @@ public class DataGenerator
             phones[i] = new PhoneNumber()
             {
                 Type = (PhoneType)_random.Next(2),
-                Number = this.GenerateRandomNumber(9)
+                Number = GenerateRandomNumber(9)
             };
         }
 
