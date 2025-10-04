@@ -1,13 +1,15 @@
 ﻿using System;
 using BenchmarkDotNet.Running;
 
-namespace PbfLite.Benchmark {
-    class Program {
-        static void Main(string[] args) {
-            BenchmarkRunner.Run<ReadTests>();
-            BenchmarkRunner.Run<ReadTestsPrepared>();
+namespace PbfLite.Benchmark;
 
-            BenchmarkRunner.Run<WriteTests>();
-        }
+class Program
+{
+    static void Main(string[] args)
+    {
+        BenchmarkRunner.Run<ReadTests>();
+        BenchmarkRunner.Run<ReadTestsPrepared>();
+
+        BenchmarkRunner.Run<WriteTests>();
     }
 }
