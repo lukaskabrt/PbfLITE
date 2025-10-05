@@ -21,7 +21,7 @@ public class PbfBlockTests
     }
 
     [Theory]
-    [InlineData(new byte[] { 0x08 }, WireType.Variant)]
+    [InlineData(new byte[] { 0x08 }, WireType.Varint)]
     [InlineData(new byte[] { 0x09 }, WireType.Fixed64)]
     [InlineData(new byte[] { 0x0A }, WireType.String)]
     [InlineData(new byte[] { 0x0D }, WireType.Fixed32)]
@@ -32,6 +32,22 @@ public class PbfBlockTests
         var header = block.ReadFieldHeader();
 
         Assert.Equal(wireType, header.wireType);
+    }
+
+
+    [Theory]
+    [InlineData(1, WireType.Varint, new byte[] { 0x08 })]
+    [InlineData(1, WireType.Fixed64, new byte[] { 0x09 })]
+    [InlineData(1, WireType.String, new byte[] { 0x0A })]
+    [InlineData(1, WireType.Fixed32, new byte[] { 0x0D })]
+    [InlineData(16, WireType.Varint, new byte[] { 0x80, 0x01 })]
+    public void WriteFieldHeader_WritesCorrectBytes(int fieldNumber, WireType wireType, byte[] expectedBytes)
+    {
+        var block = PbfBlock.Create(new byte[2]);
+
+        block.WriteFieldHeader(fieldNumber, wireType);
+
+        SpanAssert.Equal(expectedBytes, block.Block);
     }
 
     [Fact]
@@ -47,9 +63,9 @@ public class PbfBlockTests
 
 
     [Theory]
-    [InlineData(new byte[] { 0x00 }, WireType.Variant, 1)]
-    [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x0F }, WireType.Variant, 5)]
-    [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, WireType.Variant, 10)]
+    [InlineData(new byte[] { 0x00 }, WireType.Varint, 1)]
+    [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x0F }, WireType.Varint, 5)]
+    [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, WireType.Varint, 10)]
     [InlineData(new byte[] { 0x00, 0x00, 0x00, 0x00 }, WireType.Fixed32, 4)]
     [InlineData(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, WireType.Fixed64, 8)]
     [InlineData(new byte[] { 0x03, 0x41, 0x42, 0x43 }, WireType.String, 4)]
@@ -86,5 +102,31 @@ public class PbfBlockTests
         var number = PbfBlock.Zag(encodedNumber);
 
         Assert.Equal(expectedNumber, number);
+    }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(-1, 1)]
+    [InlineData(1, 2)]
+    [InlineData(2147483647, 4294967294)]
+    [InlineData(-2147483648, 4294967295)]
+    public void Zig_Encodes32BitValues(int number, uint expectedEncodedNumber)
+    {
+        var encodedNumber = PbfBlock.Zig(number);
+
+        Assert.Equal(expectedEncodedNumber, encodedNumber);
+    }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(-1, 1)]
+    [InlineData(1, 2)]
+    [InlineData(9223372036854775807L, 18446744073709551614UL)]
+    [InlineData(-9223372036854775808L, 18446744073709551615UL)]
+    public void Zig_Encodes64BitValues(long number, ulong expectedEncodedNumber)
+    {
+        var encodedNumber = PbfBlock.Zig(number);
+
+        Assert.Equal(expectedEncodedNumber, encodedNumber);
     }
 }
