@@ -7,10 +7,11 @@ class Program
 {
     static void Main(string[] args)
     {
-        BenchmarkRunner.Run<ReadPrimitivesBenchmarks>();
-        BenchmarkRunner.Run<ReadTests>();
-        BenchmarkRunner.Run<ReadTestsPrepared>();
+        //BenchmarkRunner.Run<ReadPrimitivesBenchmarks>();
+        //BenchmarkRunner.Run<WritePrimitivesBenchmarks>();
+        //BenchmarkRunner.Run<ReadTests>();
+        //BenchmarkRunner.Run<ReadTestsPrepared>();
 
-        BenchmarkRunner.Run<WriteTests>();
+        //BenchmarkRunner.Run<WriteTests>();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -100,45 +101,33 @@ public ref partial struct PbfBlock
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint ReadFixed32()
     {
-        return ((uint)_block[_position++])
-            | (((uint)_block[_position++]) << 8)
-            | (((uint)_block[_position++]) << 16)
-            | (((uint)_block[_position++]) << 24);
+        var value = BinaryPrimitives.ReadUInt32LittleEndian(_block.Slice(_position, 4));
+        _position += 4;
+
+        return value;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteFixed32(uint value)
     {
-        _block[_position++] = (byte)(value & 0xFF);
-        _block[_position++] = (byte)((value >> 8) & 0xFF);
-        _block[_position++] = (byte)((value >> 16) & 0xFF);
-        _block[_position++] = (byte)((value >> 24) & 0xFF);
+        BinaryPrimitives.WriteUInt32LittleEndian(_block.Slice(_position, 4), value);
+        _position += 4;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ulong ReadFixed64()
     {
-        return ((ulong)_block[_position++])
-            | (((ulong)_block[_position++]) << 8)
-            | (((ulong)_block[_position++]) << 16)
-            | (((ulong)_block[_position++]) << 24)
-            | (((ulong)_block[_position++]) << 32)
-            | (((ulong)_block[_position++]) << 40)
-            | (((ulong)_block[_position++]) << 48)
-            | (((ulong)_block[_position++]) << 56);
+        var value = BinaryPrimitives.ReadUInt64LittleEndian(_block.Slice(_position, 8));
+        _position += 8;
+
+        return value;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteFixed64(ulong value)
     {
-        _block[_position++] = (byte)(value & 0xFF);
-        _block[_position++] = (byte)((value >> 8) & 0xFF);
-        _block[_position++] = (byte)((value >> 16) & 0xFF);
-        _block[_position++] = (byte)((value >> 24) & 0xFF);
-        _block[_position++] = (byte)((value >> 32) & 0xFF);
-        _block[_position++] = (byte)((value >> 40) & 0xFF);
-        _block[_position++] = (byte)((value >> 48) & 0xFF);
-        _block[_position++] = (byte)((value >> 56) & 0xFF);
+        BinaryPrimitives.WriteUInt64LittleEndian(_block.Slice(_position, 8), value);
+        _position += 8;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
