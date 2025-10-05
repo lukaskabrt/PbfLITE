@@ -62,6 +62,12 @@ public ref partial struct PbfBlock
         }
     }
 
+    public void WriteFieldHeader(int fieldNumber, WireType wireType)
+    {
+        var header = ((uint)fieldNumber << 3) | (uint)wireType;
+        WriteVarint32(header);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void SkipField(WireType wireType)
     {

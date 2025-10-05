@@ -34,6 +34,22 @@ public class PbfBlockTests
         Assert.Equal(wireType, header.wireType);
     }
 
+
+    [Theory]
+    [InlineData(1, WireType.Varint, new byte[] { 0x08 })]
+    [InlineData(1, WireType.Fixed64, new byte[] { 0x09 })]
+    [InlineData(1, WireType.String, new byte[] { 0x0A })]
+    [InlineData(1, WireType.Fixed32, new byte[] { 0x0D })]
+    [InlineData(16, WireType.Varint, new byte[] { 0x80, 0x01 })]
+    public void WriteFieldHeader_WritesCorrectBytes(int fieldNumber, WireType wireType, byte[] expectedBytes)
+    {
+        var block = PbfBlock.Create(new byte[2]);
+
+        block.WriteFieldHeader(fieldNumber, wireType);
+
+        SpanAssert.Equal(expectedBytes, block.Block);
+    }
+
     [Fact]
     public void ReadFieldHeader_ReturnsNoneWhenEndOfBlockIsReached()
     {
