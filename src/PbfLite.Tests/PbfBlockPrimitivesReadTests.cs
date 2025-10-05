@@ -60,7 +60,7 @@ public class PbfBlockPrimitivesReadTests
     {
         var block = PbfBlock.Create(data);
 
-        var number = block.ReadVarint32();
+        var number = block.ReadVarInt32();
 
         Assert.Equal(expectedNumber, number);
     }
@@ -82,7 +82,7 @@ public class PbfBlockPrimitivesReadTests
     {
         var block = PbfBlock.Create(data);
 
-        var number = block.ReadVarint64();
+        var number = block.ReadVarInt64();
 
         Assert.Equal(expectedNumber, number);
     }

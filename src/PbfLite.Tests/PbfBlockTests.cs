@@ -103,4 +103,30 @@ public class PbfBlockTests
 
         Assert.Equal(expectedNumber, number);
     }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(-1, 1)]
+    [InlineData(1, 2)]
+    [InlineData(2147483647, 4294967294)]
+    [InlineData(-2147483648, 4294967295)]
+    public void Zig_Encodes32BitValues(int number, uint expectedEncodedNumber)
+    {
+        var encodedNumber = PbfBlock.Zig(number);
+
+        Assert.Equal(expectedEncodedNumber, encodedNumber);
+    }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(-1, 1)]
+    [InlineData(1, 2)]
+    [InlineData(9223372036854775807L, 18446744073709551614UL)]
+    [InlineData(-9223372036854775808L, 18446744073709551615UL)]
+    public void Zig_Encodes64BitValues(long number, ulong expectedEncodedNumber)
+    {
+        var encodedNumber = PbfBlock.Zig(number);
+
+        Assert.Equal(expectedEncodedNumber, encodedNumber);
+    }
 }

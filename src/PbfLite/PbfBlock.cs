@@ -30,17 +30,29 @@ public ref partial struct PbfBlock
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Zag(uint ziggedValue)
+    internal static int Zag(uint ziggedValue)
     {
         int value = (int)ziggedValue;
         return (-(value & 0x01)) ^ ((value >> 1) & ~PbfBlock.Int32Msb);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static long Zag(ulong ziggedValue)
+    internal static long Zag(ulong ziggedValue)
     {
         var value = (long)ziggedValue;
         return (-(value & 0x01L)) ^ ((value >> 1) & ~PbfBlock.Int64Msb);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static uint Zig(int value)
+    {
+        return (uint)((value << 1) ^ (value >> 31));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static ulong Zig(long value)
+    {
+        return (ulong)((value << 1) ^ (value >> 63));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -51,7 +63,7 @@ public ref partial struct PbfBlock
             return (0, WireType.None);
         }
 
-        var header = ReadVarint32();
+        var header = ReadVarInt32();
         if (header != 0)
         {
             return ((int)(header >> 3), (WireType)(header & 7));
@@ -65,7 +77,7 @@ public ref partial struct PbfBlock
     public void WriteFieldHeader(int fieldNumber, WireType wireType)
     {
         var header = ((uint)fieldNumber << 3) | (uint)wireType;
-        WriteVarint32(header);
+        WriteVarInt32(header);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -73,11 +85,11 @@ public ref partial struct PbfBlock
     {
         switch (wireType)
         {
-            case WireType.Varint: ReadVarint64(); break;
+            case WireType.Varint: ReadVarInt64(); break;
             case WireType.Fixed32: _position += 4; break;
             case WireType.Fixed64: _position += 8; break;
             case WireType.String:
-                var length = ReadVarint64();
+                var length = ReadVarInt64();
                 _position += (int)length;
                 break;
             default: throw new ArgumentException($"Unable to skip field. '{wireType}' is unknown  WireType");
@@ -130,7 +142,7 @@ public ref partial struct PbfBlock
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public uint ReadVarint32()
+    public uint ReadVarInt32()
     {
         uint value = _block[_position++];
         if ((value & 0x80) == 0)
@@ -181,7 +193,7 @@ public ref partial struct PbfBlock
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteVarint32(uint value)
+    public void WriteVarInt32(uint value)
     {
         while (value >= 0x80)
         {
@@ -192,7 +204,7 @@ public ref partial struct PbfBlock
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ulong ReadVarint64()
+    public ulong ReadVarInt64()
     {
         ulong value = _block[_position++];
         if ((value & 0x80) == 0)
@@ -269,7 +281,7 @@ public ref partial struct PbfBlock
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteVarint64(ulong value)
+    public void WriteVarInt64(ulong value)
     {
         while (value >= 0x80)
         {
@@ -282,7 +294,7 @@ public ref partial struct PbfBlock
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<byte> ReadLengthPrefixedBytes()
     {
-        var length = ReadVarint32();
+        var length = ReadVarInt32();
 
         _position += (int)length;
         return _block.Slice(_position - (int)length, (int)length);
@@ -291,7 +303,7 @@ public ref partial struct PbfBlock
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteLengthPrefixedBytes(ReadOnlySpan<byte> data)
     {
-        WriteVarint32((uint)data.Length);
+        WriteVarInt32((uint)data.Length);
 
         data.CopyTo(_block[_position..]);
         _position += data.Length;

@@ -53,7 +53,7 @@ public class PbfBlockPrimitivesWritesTests
         var buffer = new byte[5]; 
         var block = PbfBlock.Create(buffer);
 
-        block.WriteVarint32(number);
+        block.WriteVarInt32(number);
 
         SpanAssert.Equal(expectedData, block.Block);
     }
@@ -77,7 +77,7 @@ public class PbfBlockPrimitivesWritesTests
         var buffer = new byte[10]; 
         var block = PbfBlock.Create(buffer);
 
-        block.WriteVarint64(number);
+        block.WriteVarInt64(number);
 
         SpanAssert.Equal(expectedData, block.Block);
     }
