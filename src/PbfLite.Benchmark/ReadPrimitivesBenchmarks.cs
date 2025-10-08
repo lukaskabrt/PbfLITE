@@ -39,4 +39,20 @@ public class ReadPrimitivesBenchmarks
         block.ReadFixed64();
         return block.ReadFixed64();
     }
+
+    private static readonly byte[] VarInt32Data = [0x00, 0x01, 0x7F, 0x80, 0x01, 0x80, 0x80, 0x01, 0x80, 0x80, 0x80, 0x01, 0x80, 0x80, 0x80, 0x80, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+
+    [Benchmark]
+    public uint ReadVarInt32()
+    {
+        var block = PbfBlock.Create(VarInt32Data);
+
+        block.ReadVarInt32();
+        block.ReadVarInt32();
+        block.ReadVarInt32();
+        block.ReadVarInt32();
+        block.ReadVarInt32();
+        block.ReadVarInt32();
+        return block.ReadVarInt32();
+    }
 }
