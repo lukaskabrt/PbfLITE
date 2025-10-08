@@ -35,9 +35,27 @@ public ref partial struct PbfBlockReader
     }
 
     private static readonly ItemReaderDelegate<uint> ReadUintDelegate = static (ref PbfBlockReader reader) => reader.ReadUint();
+    private static readonly ItemReaderDelegate<ulong> ReadULongDelegate = static (ref PbfBlockReader reader) => reader.ReadULong();
+    private static readonly ItemReaderDelegate<int> ReadIntDelegate = static (ref PbfBlockReader reader) => reader.ReadInt();
+    private static readonly ItemReaderDelegate<long> ReadLongDelegate = static (ref PbfBlockReader reader) => reader.ReadLong();
 
     public Span<uint> ReadUIntCollection(WireType wireType, Span<uint> buffer)
     {
         return ReadCollection(wireType, WireType.VarInt, buffer, ReadUintDelegate);
+    }
+
+    public Span<ulong> ReadULongCollection(WireType wireType, Span<ulong> buffer)
+    {
+        return ReadCollection(wireType, WireType.VarInt, buffer, ReadULongDelegate);
+    }
+
+    public Span<int> ReadIntCollection(WireType wireType, Span<int> buffer)
+    {
+        return ReadCollection(wireType, WireType.VarInt, buffer, ReadIntDelegate);
+    }
+
+    public Span<long> ReadLongCollection(WireType wireType, Span<long> buffer)
+    {
+        return ReadCollection(wireType, WireType.VarInt, buffer, ReadLongDelegate);
     }
 }
