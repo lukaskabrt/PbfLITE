@@ -3,7 +3,7 @@ using Xunit;
 
 namespace PbfLite.Tests;
 
-public static class SpanAssert
+internal static class SpanAssert
 {
     public static void Equal(ReadOnlySpan<byte> expected, ReadOnlySpan<byte> actual)
     {

@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace PbfLite.Tests;
 
-public class PbfBlockSystemTypesReadTests
+public class PbfBlockReaderSystemTypesTests
 {
     [Theory]
     [InlineData(new byte[] { 0x0C, 0x45, 0x6E, 0x67, 0x6C, 0x69, 0x73, 0x68, 0x20, 0x74, 0x65, 0x78, 0x74 }, "English text")]
     [InlineData(new byte[] { 0x0C, 0xC4, 0x8C, 0x65, 0x73, 0x6B, 0xC3, 0xBD, 0x20, 0x74, 0x65, 0x78, 0x74 }, "Český text")]
     public void ReadString_ReadsUtf8EncodedString(byte[] data, string expectedText)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var text = block.ReadString();
+        var text = reader.ReadString();
 
         Assert.Equal(expectedText, text);
     }
@@ -24,9 +21,9 @@ public class PbfBlockSystemTypesReadTests
     [InlineData(new byte[] { 0x01 }, true)]
     public void ReadBoolean_ReadsValuesEncodedAsVarint(byte[] data, bool expectedValue)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var value = block.ReadBoolean();
+        var value = reader.ReadBoolean();
 
         Assert.Equal(expectedValue, value);
     }
@@ -39,9 +36,9 @@ public class PbfBlockSystemTypesReadTests
     [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x0F }, -2147483648)]
     public void ReadSignedInt_ReadsZiggedVarintValues(byte[] data, int expectedNumber)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var number = block.ReadSignedInt();
+        var number = reader.ReadSignedInt();
 
         Assert.Equal(expectedNumber, number);
     }
@@ -54,9 +51,9 @@ public class PbfBlockSystemTypesReadTests
     [InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0xF8, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, -2147483648)]
     public void ReadInt_ReadsVarintValues(byte[] data, int expectedNumber)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var number = block.ReadInt();
+        var number = reader.ReadInt();
 
         Assert.Equal(expectedNumber, number);
     }
@@ -69,9 +66,9 @@ public class PbfBlockSystemTypesReadTests
     [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, -9223372036854775808)]
     public void ReadSignedLong_ReadsZiggedVarintValues(byte[] data, long expectedNumber)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var number = block.ReadSignedLong();
+        var number = reader.ReadSignedLong();
 
         Assert.Equal(expectedNumber, number);
     }
@@ -84,9 +81,9 @@ public class PbfBlockSystemTypesReadTests
     [InlineData(new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01 }, -9223372036854775808)]
     public void ReadLong_ReadsVarintValues(byte[] data, long expectedNumber)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var number = block.ReadLong();
+        var number = reader.ReadLong();
 
         Assert.Equal(expectedNumber, number);
     }
@@ -98,9 +95,9 @@ public class PbfBlockSystemTypesReadTests
     [InlineData(new byte[] { 0x66, 0x80, 0x3B, 0x46 }, 12000.1f)]
     public void ReadSingle_ReadsValues(byte[] data, float expectedNumber)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var number = block.ReadSingle();
+        var number = reader.ReadSingle();
 
         Assert.Equal(expectedNumber, number);
     }
@@ -112,9 +109,9 @@ public class PbfBlockSystemTypesReadTests
     [InlineData(new byte[] { 0xCD, 0xCC, 0xCC, 0xCC, 0x0C, 0x70, 0xC7, 0x40 }, 12000.1)]
     public void ReadDouble_ReadsValues(byte[] data, double expectedNumber)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var number = block.ReadDouble();
+        var number = reader.ReadDouble();
 
         Assert.Equal(expectedNumber, number);
     }

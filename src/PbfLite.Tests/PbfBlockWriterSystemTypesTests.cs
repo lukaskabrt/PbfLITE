@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace PbfLite.Tests;
 
-public class PbfBlockSystemTypesWriteTests
+public class PbfBlockWriterSystemTypesTests
 {
     [Theory]
     [InlineData("English text", new byte[] { 0x0C, 0x45, 0x6E, 0x67, 0x6C, 0x69, 0x73, 0x68, 0x20, 0x74, 0x65, 0x78, 0x74 })]
@@ -13,11 +10,11 @@ public class PbfBlockSystemTypesWriteTests
     public void WriteString_WritesUtf8EncodedString(string text, byte[] expectedData)
     {
         var buffer = new byte[expectedData.Length];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteString(text);
+        writer.WriteString(text);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -26,11 +23,11 @@ public class PbfBlockSystemTypesWriteTests
     public void WriteBoolean_WritesValuesEncodedAsVarint(bool value, byte[] expectedData)
     {
         var buffer = new byte[expectedData.Length];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteBoolean(value);
+        writer.WriteBoolean(value);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -42,11 +39,11 @@ public class PbfBlockSystemTypesWriteTests
     public void WriteSignedInt_WritesZiggedVarintValues(int number, byte[] expectedData)
     {
         var buffer = new byte[expectedData.Length];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteSignedInt(number);
+        writer.WriteSignedInt(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -58,11 +55,11 @@ public class PbfBlockSystemTypesWriteTests
     public void WriteInt_WritesVarintValues(int number, byte[] expectedData)
     {
         var buffer = new byte[expectedData.Length];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteInt(number);
+        writer.WriteInt(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -74,11 +71,11 @@ public class PbfBlockSystemTypesWriteTests
     public void WriteUint_WritesVarintValues(uint number, byte[] expectedData)
     {
         var buffer = new byte[expectedData.Length];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteUint(number);
+        writer.WriteUint(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -90,11 +87,11 @@ public class PbfBlockSystemTypesWriteTests
     public void WriteSignedLong_WritesZiggedVarintValues(long number, byte[] expectedData)
     {
         var buffer = new byte[expectedData.Length];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteSignedLong(number);
+        writer.WriteSignedLong(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -106,11 +103,11 @@ public class PbfBlockSystemTypesWriteTests
     public void WriteLong_WritesVarintValues(long number, byte[] expectedData)
     {
         var buffer = new byte[expectedData.Length];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteLong(number);
+        writer.WriteLong(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -122,11 +119,11 @@ public class PbfBlockSystemTypesWriteTests
     public void WriteULongint_WritesVarintValues(ulong number, byte[] expectedData)
     {
         var buffer = new byte[expectedData.Length];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteULong(number);
+        writer.WriteULong(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -137,11 +134,11 @@ public class PbfBlockSystemTypesWriteTests
     public void WriteSingle_WritesValues(float number, byte[] expectedData)
     {
         var buffer = new byte[4];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteSingle(number);
+        writer.WriteSingle(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -152,10 +149,10 @@ public class PbfBlockSystemTypesWriteTests
     public void WriteDouble_WritesValues(double number, byte[] expectedData)
     {
         var buffer = new byte[8];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteDouble(number);
+        writer.WriteDouble(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 }

@@ -1,59 +1,41 @@
-﻿using System;
+using System;
 using System.Buffers.Binary;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace PbfLite;
 
-public ref partial struct PbfBlock
+public ref partial struct PbfBlockReader
 {
     private const long Int64Msb = ((long)1) << 63;
     private const int Int32Msb = ((int)1) << 31;
 
-    private Span<byte> _block;
+    private ReadOnlySpan<byte> _block;
     private int _position;
 
     public readonly int Position => _position;
 
-    public Span<byte> Block => _block.Slice(0, _position);
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static PbfBlock Create(Span<byte> block)
+    public static PbfBlockReader Create(ReadOnlySpan<byte> block)
     {
-        var result = new PbfBlock
+        return new PbfBlockReader
         {
             _block = block,
             _position = 0
         };
-
-        return result;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static int Zag(uint ziggedValue)
     {
         int value = (int)ziggedValue;
-        return (-(value & 0x01)) ^ ((value >> 1) & ~PbfBlock.Int32Msb);
+        return (-(value & 0x01)) ^ ((value >> 1) & ~Int32Msb);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static long Zag(ulong ziggedValue)
     {
         var value = (long)ziggedValue;
-        return (-(value & 0x01L)) ^ ((value >> 1) & ~PbfBlock.Int64Msb);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static uint Zig(int value)
-    {
-        return (uint)((value << 1) ^ (value >> 31));
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static ulong Zig(long value)
-    {
-        return (ulong)((value << 1) ^ (value >> 63));
+        return (-(value & 0x01L)) ^ ((value >> 1) & ~Int64Msb);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -75,12 +57,6 @@ public ref partial struct PbfBlock
         }
     }
 
-    public void WriteFieldHeader(int fieldNumber, WireType wireType)
-    {
-        var header = ((uint)fieldNumber << 3) | (uint)wireType;
-        WriteVarInt32(header);
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void SkipField(WireType wireType)
     {
@@ -97,7 +73,6 @@ public ref partial struct PbfBlock
         }
     }
 
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint ReadFixed32()
     {
@@ -108,26 +83,12 @@ public ref partial struct PbfBlock
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteFixed32(uint value)
-    {
-        BinaryPrimitives.WriteUInt32LittleEndian(_block.Slice(_position, 4), value);
-        _position += 4;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ulong ReadFixed64()
     {
         var value = BinaryPrimitives.ReadUInt64LittleEndian(_block.Slice(_position, 8));
         _position += 8;
 
         return value;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteFixed64(ulong value)
-    {
-        BinaryPrimitives.WriteUInt64LittleEndian(_block.Slice(_position, 8), value);
-        _position += 8;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -179,17 +140,6 @@ public ref partial struct PbfBlock
         }
 
         throw new InvalidOperationException("Malformed  VarInt");
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteVarInt32(uint value)
-    {
-        while (value >= 0x80)
-        {
-            _block[_position++] = (byte)(value | 0x80);
-            value >>= 7;
-        }
-        _block[_position++] = (byte)value;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -270,31 +220,11 @@ public ref partial struct PbfBlock
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteVarInt64(ulong value)
-    {
-        while (value >= 0x80)
-        {
-            _block[_position++] = (byte)(value | 0x80);
-            value >>= 7;
-        }
-        _block[_position++] = (byte)value;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Span<byte> ReadLengthPrefixedBytes()
+    public ReadOnlySpan<byte> ReadLengthPrefixedBytes()
     {
         var length = ReadVarInt32();
 
         _position += (int)length;
         return _block.Slice(_position - (int)length, (int)length);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteLengthPrefixedBytes(ReadOnlySpan<byte> data)
-    {
-        WriteVarInt32((uint)data.Length);
-
-        data.CopyTo(_block[_position..]);
-        _position += data.Length;
     }
 }
