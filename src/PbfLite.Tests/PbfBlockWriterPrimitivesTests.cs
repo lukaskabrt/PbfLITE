@@ -2,7 +2,7 @@ using Xunit;
 
 namespace PbfLite.Tests;
 
-public class PbfBlockPrimitivesWritesTests
+public class PbfBlockWriterPrimitivesTests
 {
     [Theory]
     [InlineData(0, new byte[] { 0x00, 0x00, 0x00, 0x00 })]
@@ -15,11 +15,11 @@ public class PbfBlockPrimitivesWritesTests
     public void WriteFixed32_WritesNumbers(uint number, byte[] expectedData)
     {
         var buffer = new byte[4];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteFixed32(number);
+        writer.WriteFixed32(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -31,11 +31,11 @@ public class PbfBlockPrimitivesWritesTests
     public void WriteFixed64_WritesNumbers(ulong number, byte[] expectedData)
     {
         var buffer = new byte[8];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteFixed64(number);
+        writer.WriteFixed64(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -51,11 +51,11 @@ public class PbfBlockPrimitivesWritesTests
     {
         // Maximum 5 bytes for a 32-bit varint
         var buffer = new byte[5]; 
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteVarInt32(number);
+        writer.WriteVarInt32(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Theory]
@@ -75,11 +75,11 @@ public class PbfBlockPrimitivesWritesTests
     {
         // Maximum 10 bytes for a 64-bit varint
         var buffer = new byte[10]; 
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteVarInt64(number);
+        writer.WriteVarInt64(number);
 
-        SpanAssert.Equal(expectedData, block.Block);
+        SpanAssert.Equal(expectedData, writer.Block);
     }
 
     [Fact]
@@ -89,11 +89,10 @@ public class PbfBlockPrimitivesWritesTests
         var expected = new byte[] { 0x03, 0x41, 0x42, 0x43 };
 
         var buffer = new byte[4];
-        var block = PbfBlock.Create(buffer);
+        var writer = PbfBlockWriter.Create(buffer);
 
-        block.WriteLengthPrefixedBytes(data);
+        writer.WriteLengthPrefixedBytes(data);
 
-        SpanAssert.Equal(expected, block.Block);
+        SpanAssert.Equal(expected, writer.Block);
     }
-
 }

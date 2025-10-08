@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BenchmarkDotNet.Attributes;
 using System.IO;
-using System.Reflection;
-using System.Text;
-using BenchmarkDotNet.Attributes;
 
 namespace PbfLite.Benchmark;
 
@@ -38,6 +34,13 @@ public class ReadTests
 
     [Benchmark]
     public int PbfLiteReadAddressBook()
+    {
+        var data = PbfLite.AddressBookDeserializer.Deserialize(_data);
+        return data.People.Count;
+    }
+
+    [Benchmark]
+    public int PbfLiteReaderReadAddressBook()
     {
         var data = PbfLite.AddressBookDeserializer.Deserialize(_data);
         return data.People.Count;

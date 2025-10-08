@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PbfLite; 
+﻿namespace PbfLite; 
 
 /// <summary>
 /// Indicates the encoding used to represent an individual value in a protobuf stream

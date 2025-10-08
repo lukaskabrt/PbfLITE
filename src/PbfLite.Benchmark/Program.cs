@@ -1,5 +1,4 @@
-﻿using System;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 
 namespace PbfLite.Benchmark;
 
@@ -7,11 +6,11 @@ class Program
 {
     static void Main(string[] args)
     {
-        BenchmarkRunner.Run<ReadPrimitivesBenchmarks>();
+        BenchmarkRunner.Run<PbfBlockReaderPrimitivesBenchmarks>();
         BenchmarkRunner.Run<ReadTests>();
         BenchmarkRunner.Run<ReadTestsPrepared>();
 
-        BenchmarkRunner.Run<WritePrimitivesBenchmarks>();
+        BenchmarkRunner.Run<PbfBlockWriterPrimitivesBenchmarks>();
         BenchmarkRunner.Run<WriteTests>();
     }
 }

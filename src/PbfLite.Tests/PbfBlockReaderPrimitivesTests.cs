@@ -1,9 +1,8 @@
-using System;
 using Xunit;
 
 namespace PbfLite.Tests;
 
-public class PbfBlockPrimitivesReadTests
+public class PbfBlockReaderPrimitivesTests
 {
     [Theory]
     [InlineData(new byte[] { 0x00, 0x00, 0x00, 0x00 }, 0)]
@@ -15,9 +14,9 @@ public class PbfBlockPrimitivesReadTests
     [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF }, 4294967295)]
     public void ReadFixed32_ReadsNumbers(byte[] data, uint expectedNumber)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var number = block.ReadFixed32();
+        var number = reader.ReadFixed32();
 
         Assert.Equal(expectedNumber, number);
     }
@@ -30,9 +29,9 @@ public class PbfBlockPrimitivesReadTests
     [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }, 18446744073709551615UL)]
     public void ReadFixed64_ReadsNumbers(byte[] data, ulong expectedNumber)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var number = block.ReadFixed64();
+        var number = reader.ReadFixed64();
 
         Assert.Equal(expectedNumber, number);
     }
@@ -40,11 +39,11 @@ public class PbfBlockPrimitivesReadTests
     [Fact]
     public void ReadLengthPrefixedBytes_ReadsData()
     {
-        var block = PbfBlock.Create([0x03, 0x41, 0x42, 0x43]);
+        var reader = PbfBlockReader.Create([0x03, 0x41, 0x42, 0x43]);
 
-        var data = block.ReadLengthPrefixedBytes();
+        var data = reader.ReadLengthPrefixedBytes();
 
-        Assert.Equal(new byte[] { 0x41, 0x42, 0x43 }, data.ToArray());
+        Assert.Equal([0x41, 0x42, 0x43], data.ToArray());
     }
 
     [Theory]
@@ -58,9 +57,9 @@ public class PbfBlockPrimitivesReadTests
     [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x0F }, 4294967295)]
     public void ReadVarint32_ReadsNumbers(byte[] data, uint expectedNumber)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var number = block.ReadVarInt32();
+        var number = reader.ReadVarInt32();
 
         Assert.Equal(expectedNumber, number);
     }
@@ -80,9 +79,9 @@ public class PbfBlockPrimitivesReadTests
     [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, 18446744073709551615UL)]
     public void ReadVarint64_ReadsNumbers(byte[] data, ulong expectedNumber)
     {
-        var block = PbfBlock.Create(data);
+        var reader = PbfBlockReader.Create(data);
 
-        var number = block.ReadVarInt64();
+        var number = reader.ReadVarInt64();
 
         Assert.Equal(expectedNumber, number);
     }
