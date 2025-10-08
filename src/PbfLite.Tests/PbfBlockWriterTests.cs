@@ -2,7 +2,7 @@ using Xunit;
 
 namespace PbfLite.Tests;
 
-public class PbfBlockWriterTests
+public partial class PbfBlockWriterTests
 {
     [Theory]
     [InlineData(1, WireType.Varint, new byte[] { 0x08 })]

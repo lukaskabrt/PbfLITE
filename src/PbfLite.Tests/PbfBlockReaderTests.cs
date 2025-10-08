@@ -2,7 +2,7 @@ using Xunit;
 
 namespace PbfLite.Tests;
 
-public class PbfBlockReaderTests
+public partial class PbfBlockReaderTests
 {
     [Theory]
     [InlineData(new byte[] { 0x08 }, 1)]
