@@ -11,6 +11,7 @@ class Program
         BenchmarkRunner.Run<ReadTests>();
         BenchmarkRunner.Run<ReadTestsPrepared>();
 
+        BenchmarkRunner.Run<WritePrimitivesBenchmarks>();
         BenchmarkRunner.Run<WriteTests>();
     }
 }
