@@ -16,7 +16,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteString(text);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -29,7 +29,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteBoolean(value);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -45,7 +45,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteSignedInt(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -61,7 +61,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteInt(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -77,7 +77,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteUint(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -93,7 +93,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteSignedLong(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -109,7 +109,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteLong(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -125,7 +125,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteULong(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -140,7 +140,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteSingle(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -155,7 +155,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteDouble(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
     }
 }

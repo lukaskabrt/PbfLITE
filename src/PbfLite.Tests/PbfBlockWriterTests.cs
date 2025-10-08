@@ -5,18 +5,18 @@ namespace PbfLite.Tests;
 public partial class PbfBlockWriterTests
 {
     [Theory]
-    [InlineData(1, WireType.Varint, new byte[] { 0x08 })]
+    [InlineData(1, WireType.VarInt, new byte[] { 0x08 })]
     [InlineData(1, WireType.Fixed64, new byte[] { 0x09 })]
     [InlineData(1, WireType.String, new byte[] { 0x0A })]
     [InlineData(1, WireType.Fixed32, new byte[] { 0x0D })]
-    [InlineData(16, WireType.Varint, new byte[] { 0x80, 0x01 })]
+    [InlineData(16, WireType.VarInt, new byte[] { 0x80, 0x01 })]
     public void WriteFieldHeader_WritesCorrectBytes(int fieldNumber, WireType wireType, byte[] expectedBytes)
     {
         var writer = PbfBlockWriter.Create(new byte[2]);
 
         writer.WriteFieldHeader(fieldNumber, wireType);
 
-        SpanAssert.Equal(expectedBytes, writer.Block);
+        SpanAssert.Equal<byte>(expectedBytes, writer.Block);
     }
 
     [Theory]

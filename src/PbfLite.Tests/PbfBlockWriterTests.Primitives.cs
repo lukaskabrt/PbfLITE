@@ -21,7 +21,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteFixed32(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -37,7 +37,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteFixed64(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -57,7 +57,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteVarInt32(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Theory]
@@ -81,7 +81,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteVarInt64(number);
 
-            SpanAssert.Equal(expectedData, writer.Block);
+            SpanAssert.Equal<byte>(expectedData, writer.Block);
         }
 
         [Fact]
@@ -95,7 +95,7 @@ public partial class PbfBlockWriterTests
 
             writer.WriteLengthPrefixedBytes(data);
 
-            SpanAssert.Equal(expected, writer.Block);
+            SpanAssert.Equal<byte>(expected, writer.Block);
         }
     }
 }

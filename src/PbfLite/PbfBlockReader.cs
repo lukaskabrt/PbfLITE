@@ -62,7 +62,7 @@ public ref partial struct PbfBlockReader
     {
         switch (wireType)
         {
-            case WireType.Varint: ReadVarInt64(); break;
+            case WireType.VarInt: ReadVarInt64(); break;
             case WireType.Fixed32: _position += 4; break;
             case WireType.Fixed64: _position += 8; break;
             case WireType.String:
