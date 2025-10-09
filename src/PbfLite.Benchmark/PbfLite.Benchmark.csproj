@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\addressbook.bin" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Data\addressbook.bin" />
   </ItemGroup>
 
