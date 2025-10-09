@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Xunit;
 
 namespace PbfLite.Tests;
@@ -7,6 +8,21 @@ public partial class PbfBlockWriterTests
 {
     public class Collections
     {
+        [Fact]
+        public void WriteUIntCollection_WritesLongCollection()
+        {
+            var items = Enumerable.Repeat((uint)1, 1000).ToArray();
+
+            var encodedLength = new byte[] { 0xE8, 0x07 };
+            var expectedContent = Enumerable.Repeat((byte)1, items.Length).ToArray();
+            var expectedBytes = encodedLength.Concat(expectedContent).ToArray();
+
+            var writer = PbfBlockWriter.Create(new byte[expectedBytes.Length]);
+            writer.WriteUIntCollection(items);
+            
+            SpanAssert.Equal<byte>(expectedBytes, writer.Block);
+        }
+
         [Theory]
         [InlineData(new uint[] { 0, 128, 16384, 2097152, 268435456, 4294967295 }, new byte[] { 0x14, 0x00, 0x80, 0x01, 0x80, 0x80, 0x01, 0x80, 0x80, 0x80, 0x01, 0x80, 0x80, 0x80, 0x80, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x0F })]
         public void WriteUIntCollection_MultipleElements_WritesDataWithLengthPrefix(uint[] items, byte[] expectedBytes)

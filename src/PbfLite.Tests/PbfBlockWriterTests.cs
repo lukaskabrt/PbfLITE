@@ -44,4 +44,22 @@ public partial class PbfBlockWriterTests
 
         Assert.Equal(expectedEncodedNumber, encodedNumber);
     }
+
+    [Theory]
+    [InlineData(0, 1)]
+    [InlineData(127, 1)]
+    [InlineData(128, 2)]
+    [InlineData(16383, 2)]
+    [InlineData(16384, 3)]
+    [InlineData(2097151, 3)]
+    [InlineData(2097152, 4)]
+    [InlineData(268435455, 4)]
+    [InlineData(268435456, 5)]
+    [InlineData(uint.MaxValue, 5)]
+    public void GetVarIntByteCount_BorderValues(uint value, int expectedBytesCount)
+    {
+        var bytesCount = PbfBlockWriter.GetVarIntBytesCount(value);
+
+        Assert.Equal(expectedBytesCount, bytesCount);
+    }
 }

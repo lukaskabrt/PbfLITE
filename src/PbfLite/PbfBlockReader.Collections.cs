@@ -6,7 +6,7 @@ public ref partial struct PbfBlockReader
 {
     public delegate T ItemReaderDelegate<T>(ref PbfBlockReader reader);
 
-    public Span<T> ReadScalarCollection<T>(WireType wireType, WireType itemWireType, Span<T> buffer, ItemReaderDelegate<T> itemReader)
+    private Span<T> ReadScalarCollection<T>(WireType wireType, WireType itemWireType, Span<T> buffer, ItemReaderDelegate<T> itemReader)
     {
         if (wireType == WireType.String)
         {

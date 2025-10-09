@@ -5,61 +5,43 @@ namespace PbfLite;
 public ref partial struct PbfBlockWriter
 {
     public delegate void ItemWriterDelegate<T>(ref PbfBlockWriter writer, T item);
-
-    public void WriteScalarCollection<T>(ReadOnlySpan<T> items, ItemWriterDelegate<T> itemWriter)
+    
+    private void WriteScalarCollection<T>(ReadOnlySpan<T> items, ItemWriterDelegate<T> itemWriter)
     {
-        // Write the length-prefixed content
         var lengthPosition = _position;
-        WriteVarInt32(0); // Placeholder for length that will be overwritten
-        var contentStart = _position;
+
+        // Placeholder for length that will be overwritten
+        WriteVarInt32(0); 
 
         foreach (var item in items)
         {
             itemWriter(ref this, item);
         }
 
-        var contentLength = _position - contentStart;
+        var contentLength = _position - lengthPosition - 1;
+        var contentLengthBytesCount = GetVarIntBytesCount((uint)contentLength);
 
-        // Calculate how many bytes the actual length will take
-        var actualLengthBytes = GetVarInt32ByteCount((uint)contentLength);
-        var placeholderLengthBytes = _position - lengthPosition - contentLength;
-
-        if (actualLengthBytes != placeholderLengthBytes)
+        if (contentLengthBytesCount > 1)
         {
-            // Need to shift content to accommodate different length prefix size
-            var content = _block.Slice(contentStart, contentLength);
-            var newContentStart = lengthPosition + actualLengthBytes;
+            var content = _block.Slice(lengthPosition + 1, contentLength);
+            var newContentStart = lengthPosition + contentLengthBytesCount;
 
-            if (actualLengthBytes > placeholderLengthBytes)
-            {
-                // Need more space, shift content right
-                content.CopyTo(_block.Slice(newContentStart));
-            }
-            else
-            {
-                // Need less space, shift content left
-                for (int i = 0; i < contentLength; i++)
-                {
-                    _block[newContentStart + i] = content[i];
-                }
-            }
-
+            content.CopyTo(_block.Slice(newContentStart));
+            
             _position = newContentStart + contentLength;
         }
 
-        // Write the actual length at the correct position
         WriteVarInt32At(lengthPosition, (uint)contentLength);
     }
 
-    private int GetVarInt32ByteCount(uint value)
+    private void WriteScalarCollection<T>(ReadOnlySpan<T> items, ItemWriterDelegate<T> itemWriter, int contentLengthBytes)
     {
-        int count = 1;
-        while (value >= 0x80)
+        WriteVarInt32((uint)contentLengthBytes);
+
+        foreach (var item in items)
         {
-            count++;
-            value >>= 7;
+            itemWriter(ref this, item);
         }
-        return count;
     }
 
     private void WriteVarInt32At(int position, uint value)
@@ -112,16 +94,16 @@ public ref partial struct PbfBlockWriter
 
     public void WriteBooleanCollection(ReadOnlySpan<bool> items)
     {
-        WriteScalarCollection(items, WriteBooleanDelegate);
+        WriteScalarCollection(items, WriteBooleanDelegate, items.Length);
     }
 
     public void WriteSingleCollection(ReadOnlySpan<float> items)
     {
-        WriteScalarCollection(items, WriteSingleDelegate);
+        WriteScalarCollection(items, WriteSingleDelegate, items.Length * 4);
     }
 
     public void WriteDoubleCollection(ReadOnlySpan<double> items)
     {
-        WriteScalarCollection(items, WriteDoubleDelegate);
+        WriteScalarCollection(items, WriteDoubleDelegate, items.Length * 8);
     }
 }
