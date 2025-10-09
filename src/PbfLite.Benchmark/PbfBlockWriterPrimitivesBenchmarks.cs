@@ -4,10 +4,11 @@ namespace PbfLite.Benchmark;
 
 public class PbfBlockWriterPrimitivesBenchmarks
 {
+    private static byte[] buffer = new byte[50];
+
     [Benchmark]
     public int WriteFixed32()
     {
-        var buffer = new byte[24];
         var writer = PbfBlockWriter.Create(buffer);
         writer.WriteFixed32(1);
         writer.WriteFixed32(255);
@@ -21,7 +22,6 @@ public class PbfBlockWriterPrimitivesBenchmarks
     [Benchmark]
     public int WriteVarInt64()
     {
-        var buffer = new byte[60];
         var writer = PbfBlockWriter.Create(buffer);
         writer.WriteVarInt64(1);
         writer.WriteVarInt64(128);
@@ -35,7 +35,6 @@ public class PbfBlockWriterPrimitivesBenchmarks
     [Benchmark]
     public int WriteVarInt32()
     {
-        var buffer = new byte[30];
         var writer = PbfBlockWriter.Create(buffer);
         writer.WriteVarInt32(1);
         writer.WriteVarInt32(128);

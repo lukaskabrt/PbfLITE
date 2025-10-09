@@ -2,7 +2,7 @@ using Xunit;
 
 namespace PbfLite.Tests;
 
-public class PbfBlockReaderTests
+public partial class PbfBlockReaderTests
 {
     [Theory]
     [InlineData(new byte[] { 0x08 }, 1)]
@@ -18,7 +18,7 @@ public class PbfBlockReaderTests
     }
 
     [Theory]
-    [InlineData(new byte[] { 0x08 }, WireType.Varint)]
+    [InlineData(new byte[] { 0x08 }, WireType.VarInt)]
     [InlineData(new byte[] { 0x09 }, WireType.Fixed64)]
     [InlineData(new byte[] { 0x0A }, WireType.String)]
     [InlineData(new byte[] { 0x0D }, WireType.Fixed32)]
@@ -43,9 +43,9 @@ public class PbfBlockReaderTests
     }
 
     [Theory]
-    [InlineData(new byte[] { 0x00 }, WireType.Varint, 1)]
-    [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x0F }, WireType.Varint, 5)]
-    [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, WireType.Varint, 10)]
+    [InlineData(new byte[] { 0x00 }, WireType.VarInt, 1)]
+    [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0x0F }, WireType.VarInt, 5)]
+    [InlineData(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 }, WireType.VarInt, 10)]
     [InlineData(new byte[] { 0x00, 0x00, 0x00, 0x00 }, WireType.Fixed32, 4)]
     [InlineData(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, WireType.Fixed64, 8)]
     [InlineData(new byte[] { 0x03, 0x41, 0x42, 0x43 }, WireType.String, 4)]

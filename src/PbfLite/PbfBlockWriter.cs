@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace PbfLite;
@@ -32,6 +33,12 @@ public ref partial struct PbfBlockWriter
     internal static ulong Zig(long value)
     {
         return (ulong)((value << 1) ^ (value >> 63));
+    }
+
+    internal static int GetVarIntBytesCount(uint value)
+    {
+        int bits = 32 - BitOperations.LeadingZeroCount(value | 1);
+        return (bits + 6) / 7;
     }
 
     public void WriteFieldHeader(int fieldNumber, WireType wireType)
