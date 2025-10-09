@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace PbfLite;
 
@@ -9,7 +6,7 @@ public ref partial struct PbfBlockReader
 {
     public delegate T ItemReaderDelegate<T>(ref PbfBlockReader reader);
 
-    public Span<T> ReadCollection<T>(WireType wireType, WireType itemWireType, Span<T> buffer, ItemReaderDelegate<T> itemReader)
+    public Span<T> ReadScalarCollection<T>(WireType wireType, WireType itemWireType, Span<T> buffer, ItemReaderDelegate<T> itemReader)
     {
         if (wireType == WireType.String)
         {
@@ -46,46 +43,46 @@ public ref partial struct PbfBlockReader
 
     public Span<uint> ReadUIntCollection(WireType wireType, Span<uint> buffer)
     {
-        return ReadCollection(wireType, WireType.VarInt, buffer, ReadUintDelegate);
+        return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadUintDelegate);
     }
 
     public Span<ulong> ReadULongCollection(WireType wireType, Span<ulong> buffer)
     {
-        return ReadCollection(wireType, WireType.VarInt, buffer, ReadULongDelegate);
+        return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadULongDelegate);
     }
 
     public Span<int> ReadIntCollection(WireType wireType, Span<int> buffer)
     {
-        return ReadCollection(wireType, WireType.VarInt, buffer, ReadIntDelegate);
+        return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadIntDelegate);
     }
 
     public Span<long> ReadLongCollection(WireType wireType, Span<long> buffer)
     {
-        return ReadCollection(wireType, WireType.VarInt, buffer, ReadLongDelegate);
+        return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadLongDelegate);
     }
 
     public Span<int> ReadSignedIntCollection(WireType wireType, Span<int> buffer)
     {
-        return ReadCollection(wireType, WireType.VarInt, buffer, ReadSignedIntDelegate);
+        return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadSignedIntDelegate);
     }
 
     public Span<long> ReadSignedLongCollection(WireType wireType, Span<long> buffer)
     {
-        return ReadCollection(wireType, WireType.VarInt, buffer, ReadSignedLongDelegate);
+        return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadSignedLongDelegate);
     }
 
     public Span<bool> ReadBooleanCollection(WireType wireType, Span<bool> buffer)
     {
-        return ReadCollection(wireType, WireType.VarInt, buffer, ReadBooleanDelegate);
+        return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadBooleanDelegate);
     }
 
     public Span<float> ReadSingleCollection(WireType wireType, Span<float> buffer)
     {
-        return ReadCollection(wireType, WireType.Fixed32, buffer, ReadSingleDelegate);
+        return ReadScalarCollection(wireType, WireType.Fixed32, buffer, ReadSingleDelegate);
     }
 
     public Span<double> ReadDoubleCollection(WireType wireType, Span<double> buffer)
     {
-        return ReadCollection(wireType, WireType.Fixed64, buffer, ReadDoubleDelegate);
+        return ReadScalarCollection(wireType, WireType.Fixed64, buffer, ReadDoubleDelegate);
     }
 }
