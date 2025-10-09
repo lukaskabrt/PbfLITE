@@ -38,6 +38,11 @@ public ref partial struct PbfBlockReader
     private static readonly ItemReaderDelegate<ulong> ReadULongDelegate = static (ref PbfBlockReader reader) => reader.ReadULong();
     private static readonly ItemReaderDelegate<int> ReadIntDelegate = static (ref PbfBlockReader reader) => reader.ReadInt();
     private static readonly ItemReaderDelegate<long> ReadLongDelegate = static (ref PbfBlockReader reader) => reader.ReadLong();
+    private static readonly ItemReaderDelegate<int> ReadSignedIntDelegate = static (ref PbfBlockReader reader) => reader.ReadSignedInt();
+    private static readonly ItemReaderDelegate<long> ReadSignedLongDelegate = static (ref PbfBlockReader reader) => reader.ReadSignedLong();
+    private static readonly ItemReaderDelegate<bool> ReadBooleanDelegate = static (ref PbfBlockReader reader) => reader.ReadBoolean();
+    private static readonly ItemReaderDelegate<float> ReadSingleDelegate = static (ref PbfBlockReader reader) => reader.ReadSingle();
+    private static readonly ItemReaderDelegate<double> ReadDoubleDelegate = static (ref PbfBlockReader reader) => reader.ReadDouble();
 
     public Span<uint> ReadUIntCollection(WireType wireType, Span<uint> buffer)
     {
@@ -57,5 +62,30 @@ public ref partial struct PbfBlockReader
     public Span<long> ReadLongCollection(WireType wireType, Span<long> buffer)
     {
         return ReadCollection(wireType, WireType.VarInt, buffer, ReadLongDelegate);
+    }
+
+    public Span<int> ReadSignedIntCollection(WireType wireType, Span<int> buffer)
+    {
+        return ReadCollection(wireType, WireType.VarInt, buffer, ReadSignedIntDelegate);
+    }
+
+    public Span<long> ReadSignedLongCollection(WireType wireType, Span<long> buffer)
+    {
+        return ReadCollection(wireType, WireType.VarInt, buffer, ReadSignedLongDelegate);
+    }
+
+    public Span<bool> ReadBooleanCollection(WireType wireType, Span<bool> buffer)
+    {
+        return ReadCollection(wireType, WireType.VarInt, buffer, ReadBooleanDelegate);
+    }
+
+    public Span<float> ReadSingleCollection(WireType wireType, Span<float> buffer)
+    {
+        return ReadCollection(wireType, WireType.Fixed32, buffer, ReadSingleDelegate);
+    }
+
+    public Span<double> ReadDoubleCollection(WireType wireType, Span<double> buffer)
+    {
+        return ReadCollection(wireType, WireType.Fixed64, buffer, ReadDoubleDelegate);
     }
 }
