@@ -44,7 +44,7 @@ public ref partial struct PbfBlockReader
     }
 
     /// <summary>
-    /// Reads a 32-bit integer endoced as varint.
+    /// Reads a 32-bit integer encoded as varint.
     /// </summary>
     /// <returns>The integer value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

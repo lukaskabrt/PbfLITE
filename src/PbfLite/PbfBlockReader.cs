@@ -123,7 +123,7 @@ public ref partial struct PbfBlockReader
     }
 
     /// <summary>
-    /// Reads a base-128 variant-length encoded 32-bit unsigned integer.
+    /// Reads a 32-bit unsigned integer encoded as a base-128 varint.
     /// </summary>
     /// <returns>The decoded 32-bit unsigned integer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -174,11 +174,11 @@ public ref partial struct PbfBlockReader
             return value;
         }
 
-        throw new InvalidOperationException("Malformed  VarInt");
+        throw new InvalidOperationException("Malformed varint");
     }
 
     /// <summary>
-    /// Reads a base-128 variant-length encoded 64-bit unsigned integer.
+    /// Reads a 64-bit unsigned integer encoded as a base-128 varint.
     /// </summary>
     /// <returns>The decoded 64-bit unsigned integer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -252,7 +252,7 @@ public ref partial struct PbfBlockReader
 
         if ((chunk & ~(ulong)0x01) != 0)
         {
-            throw new InvalidOperationException("Malformed  VarInt");
+            throw new InvalidOperationException("Malformed varint");
         }
 
         return value;

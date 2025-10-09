@@ -98,7 +98,7 @@ public ref partial struct PbfBlockWriter
     }
 
     /// <summary>
-    /// Writes base-128 variable-width encoded 32-bit unsigned integer.
+    /// Writes a 32-bit unsigned integer encoded as a base-128 varint.
     /// </summary>
     /// <param name="value">The value to write.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -113,7 +113,7 @@ public ref partial struct PbfBlockWriter
     }
 
     /// <summary>
-    /// Writes base-128 variable-width encoded 64-bit unsigned integer.
+    /// Writes a 64-bit unsigned integer encoded as a base-128 varint.
     /// </summary>
     /// <param name="value">The value to write.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

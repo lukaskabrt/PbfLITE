@@ -10,7 +10,7 @@ public enum WireType {
     None = -1,
 
     /// <summary>
-    /// Base-128 variable-width integers.
+    /// Base-128 variable-width integers (varint).
     /// </summary>
     VarInt = 0,
 
