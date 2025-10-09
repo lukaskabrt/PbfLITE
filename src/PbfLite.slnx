@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="PbfLite.Benchmark/PbfLite.Benchmark.csproj" />
+  <Project Path="PbfLite.Tests/PbfLite.Tests.csproj" />
+  <Project Path="PbfLite/PbfLite.csproj" />
+</Solution>
