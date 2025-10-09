@@ -33,13 +33,6 @@ public class ReadTests
     }
 
     [Benchmark]
-    public int PbfLiteReadAddressBook()
-    {
-        var data = PbfLite.AddressBookDeserializer.Deserialize(_data);
-        return data.People.Count;
-    }
-
-    [Benchmark]
     public int PbfLiteReaderReadAddressBook()
     {
         var data = PbfLite.AddressBookDeserializer.Deserialize(_data);
