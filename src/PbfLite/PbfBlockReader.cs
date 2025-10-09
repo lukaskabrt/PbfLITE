@@ -4,6 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace PbfLite;
 
+/// <summary>
+/// Reader for Protocol Buffers binary blocks. Provides methods to read values from a block of bytes.
+/// </summary>
 public ref partial struct PbfBlockReader
 {
     private const long Int64Msb = ((long)1) << 63;
@@ -12,8 +15,17 @@ public ref partial struct PbfBlockReader
     private ReadOnlySpan<byte> _block;
     private int _position;
 
+    /// <summary>
+    /// Gets the current read position inside the block.
+    /// </summary>
     public readonly int Position => _position;
 
+    /// <summary>
+    /// Creates a new <see cref="PbfBlockReader"/> instance for the provided
+    /// block of bytes.
+    /// </summary>
+    /// <param name="block">The buffer to read from.</param>
+    /// <returns>A new reader positioned at the beginning of <paramref name="block"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PbfBlockReader Create(ReadOnlySpan<byte> block)
     {
@@ -38,6 +50,13 @@ public ref partial struct PbfBlockReader
         return (-(value & 0x01L)) ^ ((value >> 1) & ~Int64Msb);
     }
 
+    /// <summary>
+    /// Reads the next field header from the stream and returns the field
+    /// number and wire type. If the end of the block is reached the
+    /// returned field number will be zero and the wire type will be
+    /// <see cref="WireType.None"/>.
+    /// </summary>
+    /// <returns>Tuple of (fieldNumber, wireType).</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public (int fieldNumber, WireType wireType) ReadFieldHeader()
     {
@@ -57,6 +76,10 @@ public ref partial struct PbfBlockReader
         }
     }
 
+    /// <summary>
+    /// Skips a field with the specified wire type.
+    /// </summary>
+    /// <param name="wireType">The wire type of the field to skip.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void SkipField(WireType wireType)
     {
@@ -73,6 +96,10 @@ public ref partial struct PbfBlockReader
         }
     }
 
+    /// <summary>
+    /// Reads a 4-byte little-endian fixed value.
+    /// </summary>
+    /// <returns>The 32-bit unsigned integer read.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint ReadFixed32()
     {
@@ -82,6 +109,10 @@ public ref partial struct PbfBlockReader
         return value;
     }
 
+    /// <summary>
+    /// Reads an 8-byte little-endian fixed value.
+    /// </summary>
+    /// <returns>The 64-bit unsigned integer read.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ulong ReadFixed64()
     {
@@ -91,6 +122,10 @@ public ref partial struct PbfBlockReader
         return value;
     }
 
+    /// <summary>
+    /// Reads a base-128 variant-length encoded 32-bit unsigned integer.
+    /// </summary>
+    /// <returns>The decoded 32-bit unsigned integer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint ReadVarInt32()
     {
@@ -142,6 +177,10 @@ public ref partial struct PbfBlockReader
         throw new InvalidOperationException("Malformed  VarInt");
     }
 
+    /// <summary>
+    /// Reads a base-128 variant-length encoded 64-bit unsigned integer.
+    /// </summary>
+    /// <returns>The decoded 64-bit unsigned integer.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ulong ReadVarInt64()
     {
@@ -219,6 +258,11 @@ public ref partial struct PbfBlockReader
         return value;
     }
 
+    /// <summary>
+    /// Reads a length-prefixed sequence of bytes and returns it as a
+    /// <see cref="ReadOnlySpan{T}"/> referring to the underlying block.
+    /// </summary>
+    /// <returns>The slice of bytes representing the value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<byte> ReadLengthPrefixedBytes()
     {
