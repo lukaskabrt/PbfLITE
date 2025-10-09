@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using PbfLite.Benchmark.Models;
+﻿using PbfLite.Benchmark.Models;
 using ProtoBuf;
+using System.IO;
 
 namespace PbfLite.Benchmark.ProtobufNet;
 

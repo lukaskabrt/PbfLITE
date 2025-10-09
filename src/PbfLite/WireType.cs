@@ -1,7 +1,7 @@
 ﻿namespace PbfLite; 
 
 /// <summary>
-/// Indicates the encoding used to represent an individual value in a protobuf stream
+/// Indicates the encoding used to represent an individual value in a Protocol Buffers stream.
 /// </summary>
 public enum WireType {
     /// <summary>
@@ -10,32 +10,22 @@ public enum WireType {
     None = -1,
 
     /// <summary>
-    /// Base-128 variant-length encoding
+    /// Base-128 variable-width integers (varint).
     /// </summary>
     VarInt = 0,
 
     /// <summary>
-    /// Fixed-length 8-byte encoding
+    /// Fixed-length 8-byte encoding.
     /// </summary>
     Fixed64 = 1,
 
     /// <summary>
-    /// Length-varint-prefixed encoding
+    /// Length-prefixed encoding.
     /// </summary>
     String = 2,
 
     /// <summary>
-    /// Indicates the start of a group
-    /// </summary>
-    // DEPRECATED StartGroup = 3,
-
-    /// <summary>
-    /// Indicates the end of a group
-    /// </summary>
-    // DEPRECATED EndGroup = 4,
-
-    /// <summary>
     /// Fixed-length 4-byte encoding
-    /// </summary>10
+    /// </summary>
     Fixed32 = 5
 }

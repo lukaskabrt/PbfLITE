@@ -3,7 +3,6 @@ using System.IO;
 
 namespace PbfLite.Benchmark;
 
-//[SimpleJob()]
 [MemoryDiagnoser]
 public class ReadTests
 {
@@ -29,13 +28,6 @@ public class ReadTests
     public int GoogleProtobufReadAddressBook()
     {
         var data = GoogleProtobuf.AddressBook.Parser.ParseFrom(_data);
-        return data.People.Count;
-    }
-
-    [Benchmark]
-    public int PbfLiteReadAddressBook()
-    {
-        var data = PbfLite.AddressBookDeserializer.Deserialize(_data);
         return data.People.Count;
     }
 

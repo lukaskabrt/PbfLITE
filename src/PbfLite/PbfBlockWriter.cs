@@ -4,15 +4,30 @@ using System.Runtime.CompilerServices;
 
 namespace PbfLite;
 
+/// <summary>
+/// Writer for Protocol Buffers binary blocks. Provides methods to write values into a provided byte buffer.
+/// </summary>
 public ref partial struct PbfBlockWriter
 {
     private Span<byte> _block;
     private int _position;
 
+    /// <summary>
+    /// Gets the current position inside the block.
+    /// </summary>
     public readonly int Position => _position;
 
+    /// <summary>
+    /// Gets the written portion of the underlying block.
+    /// </summary>
     public Span<byte> Block => _block.Slice(0, _position);
 
+    /// <summary>
+    /// Creates a new <see cref="PbfBlockWriter"/> that writes into the
+    /// provided span.
+    /// </summary>
+    /// <param name="block">The buffer to write into.</param>
+    /// <returns>A new writer instance.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PbfBlockWriter Create(Span<byte> block)
     {
@@ -41,12 +56,21 @@ public ref partial struct PbfBlockWriter
         return (bits + 6) / 7;
     }
 
+    /// <summary>
+    /// Writes a field header composed of field number and wire type.
+    /// </summary>
+    /// <param name="fieldNumber">The Protocol Buffers field number.</param>
+    /// <param name="wireType">The wire type for the field.</param>
     public void WriteFieldHeader(int fieldNumber, WireType wireType)
     {
         var header = ((uint)fieldNumber << 3) | (uint)wireType;
         WriteVarInt32(header);
     }
 
+    /// <summary>
+    /// Writes a 4-byte little-endian fixed value.
+    /// </summary>
+    /// <param name="value">The value to write.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteFixed32(uint value)
     {
@@ -56,6 +80,10 @@ public ref partial struct PbfBlockWriter
         _block[_position++] = (byte)((value >> 24) & 0xFF);
     }
 
+    /// <summary>
+    /// Writes an 8-byte little-endian fixed value.
+    /// </summary>
+    /// <param name="value">The value to write.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteFixed64(ulong value)
     {
@@ -69,6 +97,10 @@ public ref partial struct PbfBlockWriter
         _block[_position++] = (byte)((value >> 56) & 0xFF);
     }
 
+    /// <summary>
+    /// Writes a 32-bit unsigned integer encoded as a base-128 varint.
+    /// </summary>
+    /// <param name="value">The value to write.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteVarInt32(uint value)
     {
@@ -80,6 +112,10 @@ public ref partial struct PbfBlockWriter
         _block[_position++] = (byte)value;
     }
 
+    /// <summary>
+    /// Writes a 64-bit unsigned integer encoded as a base-128 varint.
+    /// </summary>
+    /// <param name="value">The value to write.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteVarInt64(ulong value)
     {
@@ -91,6 +127,10 @@ public ref partial struct PbfBlockWriter
         _block[_position++] = (byte)value;
     }
 
+    /// <summary>
+    /// Writes a length-prefixed span of bytes into the block.
+    /// </summary>
+    /// <param name="data">The bytes to write.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteLengthPrefixedBytes(ReadOnlySpan<byte> data)
     {

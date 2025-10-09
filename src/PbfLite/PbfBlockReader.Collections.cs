@@ -4,7 +4,7 @@ namespace PbfLite;
 
 public ref partial struct PbfBlockReader
 {
-    public delegate T ItemReaderDelegate<T>(ref PbfBlockReader reader);
+    private delegate T ItemReaderDelegate<T>(ref PbfBlockReader reader);
 
     private Span<T> ReadScalarCollection<T>(WireType wireType, WireType itemWireType, Span<T> buffer, ItemReaderDelegate<T> itemReader)
     {
@@ -41,46 +41,100 @@ public ref partial struct PbfBlockReader
     private static readonly ItemReaderDelegate<float> ReadSingleDelegate = static (ref PbfBlockReader reader) => reader.ReadSingle();
     private static readonly ItemReaderDelegate<double> ReadDoubleDelegate = static (ref PbfBlockReader reader) => reader.ReadDouble();
 
+    /// <summary>
+    /// Reads a collection of unsigned 32-bit integers into the provided buffer.
+    /// </summary>
+    /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="buffer">The buffer to fill with decoded items.</param>
+    /// <returns>A slice of <paramref name="buffer"/> containing the read items.</returns>
     public Span<uint> ReadUIntCollection(WireType wireType, Span<uint> buffer)
     {
         return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadUintDelegate);
     }
 
+    /// <summary>
+    /// Reads a collection of unsigned 64-bit integers into the provided buffer.
+    /// </summary>
+    /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="buffer">The buffer to fill with decoded items.</param>
+    /// <returns>A slice of <paramref name="buffer"/> containing the read items.</returns>
     public Span<ulong> ReadULongCollection(WireType wireType, Span<ulong> buffer)
     {
         return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadULongDelegate);
     }
 
+    /// <summary>
+    /// Reads a collection of signed 32-bit integers into the provided buffer.
+    /// </summary>
+    /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="buffer">The buffer to fill with decoded items.</param>
+    /// <returns>A slice of <paramref name="buffer"/> containing the read items.</returns>    
     public Span<int> ReadIntCollection(WireType wireType, Span<int> buffer)
     {
         return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadIntDelegate);
     }
 
+    /// <summary>
+    /// Reads a collection of signed 64-bit integers into the provided buffer.
+    /// </summary>
+    /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="buffer">The buffer to fill with decoded items.</param>
+    /// <returns>A slice of <paramref name="buffer"/> containing the read items.</returns>
     public Span<long> ReadLongCollection(WireType wireType, Span<long> buffer)
     {
         return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadLongDelegate);
     }
 
+    /// <summary>
+    /// Reads a collection of zigzag-encoded signed 32-bit integers into the provided buffer.
+    /// </summary>
+    /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="buffer">The buffer to fill with decoded items.</param>
+    /// <returns>A slice of <paramref name="buffer"/> containing the read items.</returns>
     public Span<int> ReadSignedIntCollection(WireType wireType, Span<int> buffer)
     {
         return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadSignedIntDelegate);
     }
 
+    /// <summary>
+    /// Reads a collection of zigzag-encoded signed 64-bit integers into the provided buffer.
+    /// </summary>
+    /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="buffer">The buffer to fill with decoded items.</param>
+    /// <returns>A slice of <paramref name="buffer"/> containing the read items.</returns>
     public Span<long> ReadSignedLongCollection(WireType wireType, Span<long> buffer)
     {
         return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadSignedLongDelegate);
     }
 
+    /// <summary>
+    /// Reads a collection of boolean values into the provided buffer.
+    /// </summary>
+    /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="buffer">The buffer to fill with decoded items.</param>
+    /// <returns>A slice of <paramref name="buffer"/> containing the read items.</returns>
     public Span<bool> ReadBooleanCollection(WireType wireType, Span<bool> buffer)
     {
         return ReadScalarCollection(wireType, WireType.VarInt, buffer, ReadBooleanDelegate);
     }
 
+    /// <summary>
+    /// Reads a collection of 32-bit floats into the provided buffer.
+    /// </summary>
+    /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="buffer">The buffer to fill with decoded items.</param>
+    /// <returns>A slice of <paramref name="buffer"/> containing the read items.</returns>
     public Span<float> ReadSingleCollection(WireType wireType, Span<float> buffer)
     {
         return ReadScalarCollection(wireType, WireType.Fixed32, buffer, ReadSingleDelegate);
     }
 
+    /// <summary>
+    /// Reads a collection of 64-bit floats into the provided buffer.
+    /// </summary>
+    /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="buffer">The buffer to fill with decoded items.</param>
+    /// <returns>A slice of <paramref name="buffer"/> containing the read items.</returns>
     public Span<double> ReadDoubleCollection(WireType wireType, Span<double> buffer)
     {
         return ReadScalarCollection(wireType, WireType.Fixed64, buffer, ReadDoubleDelegate);
