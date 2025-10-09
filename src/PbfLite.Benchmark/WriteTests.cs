@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BenchmarkDotNet.Attributes;
+using Google.Protobuf;
 using System.IO;
 using System.Reflection;
-using System.Text;
-using BenchmarkDotNet.Attributes;
-using Google.Protobuf;
 
 namespace PbfLite.Benchmark;
 

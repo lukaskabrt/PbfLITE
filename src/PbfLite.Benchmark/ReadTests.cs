@@ -3,7 +3,6 @@ using System.IO;
 
 namespace PbfLite.Benchmark;
 
-//[SimpleJob()]
 [MemoryDiagnoser]
 public class ReadTests
 {
