@@ -1,11 +1,12 @@
-name: PR Validation
+name: Release
 
 on:
-  pull_request:
-    branches: [ master, main ]
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
-  build-and-test:
+  release:
     runs-on: ubuntu-latest
     
     steps:
@@ -29,8 +30,19 @@ jobs:
     - name: Pack NuGet package
       run: dotnet pack src/PbfLite/PbfLite.csproj --no-build --configuration Release --output ./nupkg
       
+    - name: Push to NuGet
+      run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      
     - name: Upload NuGet package artifact
       uses: actions/upload-artifact@v4
       with:
         name: nuget-package
         path: ./nupkg/*.nupkg
+        
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./nupkg/*.nupkg
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

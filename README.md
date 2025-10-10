@@ -15,7 +15,23 @@ PbfLITE is a low-level .NET Protocol Buffers implementation. It is intended for 
 
 ## Getting Started
 
-Add a reference to the `PbfLite` project and start using `PbfBlockReader` and `PbfBlockWriter` for manual protobuf serialization and deserialization.
+### Installation
+
+Install PbfLite via NuGet:
+
+```bash
+dotnet add package PbfLite
+```
+
+Or via the NuGet Package Manager:
+
+```
+Install-Package PbfLite
+```
+
+### Usage
+
+Start using `PbfBlockReader` and `PbfBlockWriter` for manual protobuf serialization and deserialization.
 
 ## Example: Deserializing an AddressBook
 
