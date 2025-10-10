@@ -12,7 +12,7 @@
     <PackageProjectUrl>https://github.com/lukaskabrt/PbfLITE</PackageProjectUrl>
     <RepositoryUrl>https://github.com/lukaskabrt/PbfLITE</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>protobuf;protocol-buffers;serialization;performance;low-level</PackageTags>
+    <PackageTags>protobuf;protocol-buffers;serialization</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
