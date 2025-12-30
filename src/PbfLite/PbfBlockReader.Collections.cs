@@ -92,6 +92,7 @@ public ref partial struct PbfBlockReader
     /// Reads a collection of unsigned 32-bit integers from the input stream using the specified wire type.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="collection">The collection to fill with decoded items.</param>
     /// <returns>A list of unsigned 32-bit integers read from the stream.</returns>
     public void ReadUIntCollection(WireType wireType, List<uint> collection) =>
         ReadScalarCollection(wireType, collection, WireType.VarInt, ReadUintDelegate);
@@ -109,6 +110,7 @@ public ref partial struct PbfBlockReader
     /// Reads a collection of unsigned 64-bit integers from the input stream using the specified wire type.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="collection">The collection to fill with decoded items.</param>
     /// <returns>A list of unsigned 64-bit integers read from the stream.</returns>
     public void ReadULongCollection(WireType wireType, List<ulong> collection) =>
         ReadScalarCollection(wireType, collection, WireType.VarInt, ReadULongDelegate);
@@ -126,6 +128,7 @@ public ref partial struct PbfBlockReader
     /// Reads a collection of signed 32-bit integers from the input stream using the specified wire type.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="collection">The collection to fill with decoded items.</param>
     /// <returns>A list of signed 32-bit integers read from the stream.</returns>
     public void ReadIntCollection(WireType wireType, List<int> collection) =>
         ReadScalarCollection(wireType, collection, WireType.VarInt, ReadIntDelegate);
@@ -143,6 +146,7 @@ public ref partial struct PbfBlockReader
     /// Reads a collection of signed 64-bit integers from the input stream using the specified wire type.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="collection">The collection to fill with decoded items.</param>
     /// <returns>A list of signed 64-bit integers read from the stream.</returns>
     public void ReadLongCollection(WireType wireType, List<long> collection) =>
         ReadScalarCollection(wireType, collection, WireType.VarInt, ReadLongDelegate);
@@ -160,6 +164,7 @@ public ref partial struct PbfBlockReader
     /// Reads a collection of zigzag-encoded signed 32-bit integers from the input stream using the specified wire type.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="collection">The collection to fill with decoded items.</param>
     /// <returns>A list of zigzag-encoded signed 32-bit integers read from the stream.</returns>
     public void ReadSignedIntCollection(WireType wireType, List<int> collection) =>
         ReadScalarCollection(wireType, collection, WireType.VarInt, ReadSignedIntDelegate);
@@ -177,6 +182,7 @@ public ref partial struct PbfBlockReader
     /// Reads a collection of zigzag-encoded signed 64-bit integers from the input stream using the specified wire type.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="collection">The collection to fill with decoded items.</param>
     /// <returns>A list of zigzag-encoded signed 64-bit integers read from the stream.</returns>
     public void ReadSignedLongCollection(WireType wireType, List<long> collection) =>
         ReadScalarCollection(wireType, collection, WireType.VarInt, ReadSignedLongDelegate);
@@ -194,6 +200,7 @@ public ref partial struct PbfBlockReader
     /// Reads a collection of boolean values from the input stream using the specified wire type.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="collection">The collection to fill with decoded items.</param>
     /// <returns>A list of boolean values read from the stream.</returns>
     public void ReadBooleanCollection(WireType wireType, List<bool> collection) =>
         ReadScalarCollection(wireType, collection, WireType.VarInt, ReadBooleanDelegate);
@@ -211,6 +218,7 @@ public ref partial struct PbfBlockReader
     /// Reads a collection of 32-bit floats from the input stream using the specified wire type.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="collection">The collection to fill with decoded items.</param>
     /// <returns>A list of 32-bit floats read from the stream.</returns>
     public void ReadSingleCollection(WireType wireType, List<float> collection) =>
         ReadScalarCollection(wireType, collection, WireType.Fixed32, ReadSingleDelegate);
@@ -228,6 +236,7 @@ public ref partial struct PbfBlockReader
     /// Reads a collection of 64-bit floats from the input stream using the specified wire type.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
+    /// <param name="collection">The collection to fill with decoded items.</param>
     /// <returns>A list of 64-bit floats read from the stream.</returns>
     public void ReadDoubleCollection(WireType wireType, List<double> collection) =>
         ReadScalarCollection(wireType, collection, WireType.Fixed64, ReadDoubleDelegate);
