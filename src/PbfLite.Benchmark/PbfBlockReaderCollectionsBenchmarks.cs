@@ -1,7 +1,10 @@
 using BenchmarkDotNet.Attributes;
+using System;
+using System.Collections.Generic;
 
 namespace PbfLite.Benchmark;
 
+[MemoryDiagnoser]
 public class PbfBlockReaderCollectionsBenchmarks
 {
     private static readonly byte[] UIntCollectionData = new byte[] { 0x0F, 0x00, 0x80, 0x01, 0x80, 0x80, 0x01, 0x80, 0x80, 0x80, 0x01, 0x80, 0x80, 0x80, 0x80, 0x01 };
@@ -12,7 +15,7 @@ public class PbfBlockReaderCollectionsBenchmarks
     {
         var reader = PbfBlockReader.Create(UIntCollectionData);
 
-        reader.ReadUIntCollection(WireType.String, UIntBuffer);
+        reader.ReadUIntCollection(WireType.String, UIntBuffer.AsSpan());
 
         return UIntBuffer[0];
     }
@@ -24,9 +27,20 @@ public class PbfBlockReaderCollectionsBenchmarks
     {
         var reader = PbfBlockReader.Create(UIntSingleItemCollection);
 
-        reader.ReadUIntCollection(WireType.VarInt, UIntBuffer);
+        reader.ReadUIntCollection(WireType.VarInt, UIntBuffer.AsSpan());
 
         return UIntBuffer[0];
+    }
+
+    [Benchmark]
+    public uint ReadUIntCollectionIntoList()
+    {
+        var reader = PbfBlockReader.Create(UIntCollectionData);
+        var collection = new List<uint>();
+
+        reader.ReadUIntCollection(WireType.String, collection);
+
+        return collection[0];
     }
 
     private static readonly byte[] ULongCollectionData = new byte[] { 0x19, 0x00, 0x80, 0x01, 0x80, 0x80, 0x01, 0x80, 0x80, 0x80, 0x01, 0x80, 0x80, 0x80, 0x80, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01 };
