@@ -1,19 +1,22 @@
+using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace PbfLite;
 
-public ref partial struct PbfBlockReader
+public partial class PbfStreamReader
 {
     private static readonly Encoding encoding = Encoding.UTF8;
 
     /// <summary>
-    /// Reads a UTF-8 encoded length-prefixed string from the block.
+    /// Reads a UTF-8 encoded length-prefixed string from the stream.
     /// </summary>
     /// <returns>The decoded string.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadString()
     {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
+
         var buffer = ReadLengthPrefixedBytes();
         return encoding.GetString(buffer);
     }
@@ -25,6 +28,8 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool ReadBoolean()
     {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
+
         switch (ReadVarInt32())
         {
             case 0: return false;
@@ -40,6 +45,8 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int ReadSignedInt()
     {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
+
         return PbfEncodingHelpers.Zag(ReadVarInt32());
     }
 
@@ -50,6 +57,8 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int ReadInt()
     {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
+
         return (int)ReadVarInt32();
     }
 
@@ -60,6 +69,8 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint ReadUint()
     {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
+
         return ReadVarInt32();
     }
 
@@ -70,6 +81,8 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public long ReadSignedLong()
     {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
+
         return PbfEncodingHelpers.Zag(ReadVarInt64());
     }
 
@@ -80,6 +93,8 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public long ReadLong()
     {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
+
         return (long)ReadVarInt64();
     }
 
@@ -90,6 +105,8 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ulong ReadULong()
     {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
+
         return ReadVarInt64();
     }
 
@@ -100,6 +117,8 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public unsafe float ReadSingle()
     {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
+
         var value = ReadFixed32();
         return *(float*)&value;
     }
@@ -111,6 +130,8 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public unsafe double ReadDouble()
     {
+        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
+
         var value = ReadFixed64();
         return *(double*)&value;
     }
