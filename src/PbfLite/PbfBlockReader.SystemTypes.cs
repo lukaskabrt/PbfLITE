@@ -40,7 +40,7 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int ReadSignedInt()
     {
-        return PbfEncodingHelpers.Zag(ReadVarInt32());
+        return PbfEncoding.Zag(ReadVarInt32());
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public ref partial struct PbfBlockReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public long ReadSignedLong()
     {
-        return PbfEncodingHelpers.Zag(ReadVarInt64());
+        return PbfEncoding.Zag(ReadVarInt64());
     }
 
     /// <summary>

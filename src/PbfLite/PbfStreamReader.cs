@@ -11,7 +11,6 @@ namespace PbfLite;
 public partial class PbfStreamReader
 {
     private readonly Stream _stream;
-    private bool _disposed;
 
     /// <summary>
     /// Creates a new <see cref="PbfStreamReader"/> instance for the provided stream.
@@ -21,7 +20,6 @@ public partial class PbfStreamReader
     public PbfStreamReader(Stream stream)
     {
         _stream = stream ?? throw new ArgumentNullException(nameof(stream));
-        _disposed = false;
     }
 
     /// <summary>
@@ -33,8 +31,6 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public (int fieldNumber, WireType wireType) ReadFieldHeader()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         if (!TryReadVarInt32(out uint header))
         {
             return (0, WireType.None);
@@ -42,7 +38,7 @@ public partial class PbfStreamReader
 
         if (header != 0)
         {
-            return ((int)(header >> 3), (WireType)(header & 7));
+            return PbfEncoding.DecodeFieldHeader(header);
         }
         else
         {
@@ -57,8 +53,6 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void SkipField(WireType wireType)
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         switch (wireType)
         {
             case WireType.VarInt:
@@ -86,10 +80,8 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint ReadFixed32()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         Span<byte> buffer = stackalloc byte[4];
-        ReadExactBytes(buffer);
+        ReadBytes(buffer);
         return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
     }
 
@@ -100,10 +92,8 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ulong ReadFixed64()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         Span<byte> buffer = stackalloc byte[8];
-        ReadExactBytes(buffer);
+        ReadBytes(buffer);
         return BinaryPrimitives.ReadUInt64LittleEndian(buffer);
     }
 
@@ -139,11 +129,9 @@ public partial class PbfStreamReader
     /// <returns>A byte array containing the length-prefixed data.</returns>
     public byte[] ReadLengthPrefixedBytes()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         var length = ReadVarInt32();
         byte[] buffer = new byte[length];
-        ReadExactBytes(buffer);
+        ReadBytes(buffer);
         return buffer;
     }
 
@@ -154,8 +142,6 @@ public partial class PbfStreamReader
     /// <returns>True if a complete varint was read; false if end of stream reached before completing the varint.</returns>
     private bool TryReadVarInt32(out uint value)
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         int byteValue = _stream.ReadByte();
         if (byteValue < 0)
         {
@@ -170,29 +156,29 @@ public partial class PbfStreamReader
         }
 
         value &= 0x7F;
-        
-        uint chunk = (uint)ReadByteOrThrow();
+
+        uint chunk = (uint)ReadByte();
         value |= (chunk & 0x7F) << 7;
         if ((chunk & 0x80) == 0)
         {
             return true;
         }
-       
-        chunk = (uint)ReadByteOrThrow();
+
+        chunk = (uint)ReadByte();
         value |= (chunk & 0x7F) << 14;
         if ((chunk & 0x80) == 0)
         {
             return true;
         }
 
-        chunk = (uint)ReadByteOrThrow();
+        chunk = (uint)ReadByte();
         value |= (chunk & 0x7F) << 21;
         if ((chunk & 0x80) == 0)
         {
             return true;
         }
 
-        chunk = (uint)ReadByteOrThrow();
+        chunk = (uint)ReadByte();
         value |= chunk << 28; // can only use 4 bits from this chunk
         if ((chunk & 0xF0) == 0)
         {
@@ -200,11 +186,11 @@ public partial class PbfStreamReader
         }
 
         if ((chunk & 0xF0) == 0xF0 &&
-            ReadByteOrThrow() == 0xFF &&
-            ReadByteOrThrow() == 0xFF &&
-            ReadByteOrThrow() == 0xFF &&
-            ReadByteOrThrow() == 0xFF &&
-            ReadByteOrThrow() == 0x01)
+            ReadByte() == 0xFF &&
+            ReadByte() == 0xFF &&
+            ReadByte() == 0xFF &&
+            ReadByte() == 0xFF &&
+            ReadByte() == 0x01)
         {
             return true;
         }
@@ -219,8 +205,6 @@ public partial class PbfStreamReader
     /// <returns>True if a complete varint was read; false if end of stream reached before completing the varint.</returns>
     private bool TryReadVarInt64(out ulong value)
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         int byteValue = _stream.ReadByte();
         if (byteValue < 0)
         {
@@ -235,74 +219,55 @@ public partial class PbfStreamReader
         }
 
         value &= 0x7F;
-
-        byteValue = _stream.ReadByte();
-        if (byteValue < 0) throw new EndOfStreamException("Unexpected end of stream while reading varint64");
-        
+        byteValue = ReadByte();        
         ulong chunk = (ulong)byteValue;
         value |= (chunk & 0x7F) << 7;
         if ((chunk & 0x80) == 0)
             return true;
 
-        byteValue = _stream.ReadByte();
-        if (byteValue < 0) throw new EndOfStreamException("Unexpected end of stream while reading varint64");
-        
+        byteValue = ReadByte();
         chunk = (ulong)byteValue;
         value |= (chunk & 0x7F) << 14;
         if ((chunk & 0x80) == 0)
             return true;
 
-        byteValue = _stream.ReadByte();
-        if (byteValue < 0) throw new EndOfStreamException("Unexpected end of stream while reading varint64");
-        
+        byteValue = ReadByte();
         chunk = (ulong)byteValue;
         value |= (chunk & 0x7F) << 21;
         if ((chunk & 0x80) == 0)
             return true;
 
-        byteValue = _stream.ReadByte();
-        if (byteValue < 0) throw new EndOfStreamException("Unexpected end of stream while reading varint64");
-        
+        byteValue = ReadByte();
         chunk = (ulong)byteValue;
         value |= (chunk & 0x7F) << 28;
         if ((chunk & 0x80) == 0)
             return true;
 
-        byteValue = _stream.ReadByte();
-        if (byteValue < 0) throw new EndOfStreamException("Unexpected end of stream while reading varint64");
-        
+        byteValue = ReadByte();
         chunk = (ulong)byteValue;
         value |= (chunk & 0x7F) << 35;
         if ((chunk & 0x80) == 0)
             return true;
 
-        byteValue = _stream.ReadByte();
-        if (byteValue < 0) throw new EndOfStreamException("Unexpected end of stream while reading varint64");
-        
+        byteValue = ReadByte();
         chunk = (ulong)byteValue;
         value |= (chunk & 0x7F) << 42;
         if ((chunk & 0x80) == 0)
             return true;
 
-        byteValue = _stream.ReadByte();
-        if (byteValue < 0) throw new EndOfStreamException("Unexpected end of stream while reading varint64");
-        
+        byteValue = ReadByte();
         chunk = (ulong)byteValue;
         value |= (chunk & 0x7F) << 49;
         if ((chunk & 0x80) == 0)
             return true;
 
-        byteValue = _stream.ReadByte();
-        if (byteValue < 0) throw new EndOfStreamException("Unexpected end of stream while reading varint64");
-        
+        byteValue = ReadByte();
         chunk = (ulong)byteValue;
         value |= (chunk & 0x7F) << 56;
         if ((chunk & 0x80) == 0)
             return true;
 
-        byteValue = _stream.ReadByte();
-        if (byteValue < 0) throw new EndOfStreamException("Unexpected end of stream while reading varint64");
-        
+        byteValue = ReadByte();
         chunk = (ulong)byteValue;
         value |= chunk << 63;
 
@@ -318,9 +283,9 @@ public partial class PbfStreamReader
     /// Reads a single byte from the stream, throwing if end is reached.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private byte ReadByteOrThrow()
+    private byte ReadByte()
     {
-        int byteValue = _stream.ReadByte();
+        var byteValue = _stream.ReadByte();
         if (byteValue < 0)
         {
             throw new EndOfStreamException("Unexpected end of stream");
@@ -332,18 +297,9 @@ public partial class PbfStreamReader
     /// <summary>
     /// Reads exactly the specified number of bytes into a span.
     /// </summary>
-    private void ReadExactBytes(Span<byte> buffer)
+    private void ReadBytes(Span<byte> buffer)
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
-        int totalRead = 0;
-        while (totalRead < buffer.Length)
-        {
-            int read = _stream.Read(buffer.Slice(totalRead));
-            if (read == 0)
-                throw new EndOfStreamException($"Unexpected end of stream. Expected {buffer.Length} bytes, but got {totalRead}");
-            totalRead += read;
-        }
+        _stream.ReadExactly(buffer);
     }
 
     /// <summary>
@@ -351,11 +307,9 @@ public partial class PbfStreamReader
     /// </summary>
     private void SkipBytes(int count)
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         if (_stream.CanSeek)
         {
-            long newPosition = _stream.Position + count;
+            var newPosition = _stream.Position + count;
             if (newPosition > _stream.Length)
             {
                 throw new EndOfStreamException($"Unexpected end of stream while skipping {count} bytes");
@@ -370,13 +324,10 @@ public partial class PbfStreamReader
 
         while (remaining > 0)
         {
-            int toRead = Math.Min(buffer.Length, remaining);
-            int read = _stream.Read(buffer.Slice(0, toRead));
-            if (read == 0)
-            {
-                throw new EndOfStreamException($"Unexpected end of stream while skipping {count} bytes");
-            }
-            remaining -= read;
+            var toRead = Math.Min(buffer.Length, remaining);
+            _stream.ReadExactly(buffer.Slice(0, toRead));
+
+            remaining -= toRead;
         }
     }
 
@@ -385,10 +336,6 @@ public partial class PbfStreamReader
     /// </summary>
     public void Dispose()
     {
-        if (!_disposed)
-        {
-            _stream?.Dispose();
-            _disposed = true;
-        }
+        _stream?.Dispose();
     }
 }

@@ -66,7 +66,7 @@ public partial class PbfBlockReaderTests
     [InlineData(4294967295, -2147483648)]
     public void Zag_Decodes32BitZiggedValues(uint encodedNumber, int expectedNumber)
     {
-        var number = PbfEncodingHelpers.Zag(encodedNumber);
+        var number = PbfEncoding.Zag(encodedNumber);
 
         Assert.Equal(expectedNumber, number);
     }
@@ -79,7 +79,7 @@ public partial class PbfBlockReaderTests
     [InlineData(18446744073709551615UL, -9223372036854775808L)]
     public void Zag_Decodes64BitZiggedValues(ulong encodedNumber, long expectedNumber)
     {
-        var number = PbfEncodingHelpers.Zag(encodedNumber);
+        var number = PbfEncoding.Zag(encodedNumber);
 
         Assert.Equal(expectedNumber, number);
     }

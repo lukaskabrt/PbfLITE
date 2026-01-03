@@ -15,8 +15,6 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadString()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         var buffer = ReadLengthPrefixedBytes();
         return encoding.GetString(buffer);
     }
@@ -28,8 +26,6 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool ReadBoolean()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         switch (ReadVarInt32())
         {
             case 0: return false;
@@ -45,9 +41,7 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int ReadSignedInt()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
-        return PbfEncodingHelpers.Zag(ReadVarInt32());
+        return PbfEncoding.Zag(ReadVarInt32());
     }
 
     /// <summary>
@@ -57,8 +51,6 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int ReadInt()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         return (int)ReadVarInt32();
     }
 
@@ -69,8 +61,6 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public uint ReadUint()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         return ReadVarInt32();
     }
 
@@ -81,9 +71,7 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public long ReadSignedLong()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
-        return PbfEncodingHelpers.Zag(ReadVarInt64());
+        return PbfEncoding.Zag(ReadVarInt64());
     }
 
     /// <summary>
@@ -93,8 +81,6 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public long ReadLong()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         return (long)ReadVarInt64();
     }
 
@@ -105,8 +91,6 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ulong ReadULong()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         return ReadVarInt64();
     }
 
@@ -117,8 +101,6 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public unsafe float ReadSingle()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         var value = ReadFixed32();
         return *(float*)&value;
     }
@@ -130,8 +112,6 @@ public partial class PbfStreamReader
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public unsafe double ReadDouble()
     {
-        ObjectDisposedException.ThrowIf(_disposed, nameof(PbfStreamReader));
-
         var value = ReadFixed64();
         return *(double*)&value;
     }

@@ -13,19 +13,14 @@ public partial class PbfStreamReader
         
         if (wireType == WireType.String)
         {
-            uint byteLength = ReadVarInt32();
-            long endPosition = _stream.Position + byteLength;
+            var byteLength = ReadVarInt32();
+            var endPosition = _stream.Position + byteLength;
 
-            // Estimate capacity based on wire type to reduce List reallocations
-            int estimatedItemSize = itemWireType switch
+            var estimatedItemsCount = PbfEncoding.EstimateItemsCount(byteLength, itemWireType);
+            if (collection.Capacity < collection.Count + estimatedItemsCount)
             {
-                WireType.VarInt => 2,      // Minimum 1 byte per varint, average ~1-5
-                WireType.Fixed32 => 4,     // Always 4 bytes
-                WireType.Fixed64 => 8,     // Always 8 bytes
-                _ => 1
-            };
-            int estimatedCapacity = Math.Max(1, (int)(byteLength / estimatedItemSize));
-            collection.Capacity = estimatedCapacity;
+                collection.Capacity = collection.Count + estimatedItemsCount;
+            }
 
             while (_stream.Position < endPosition)
             {
