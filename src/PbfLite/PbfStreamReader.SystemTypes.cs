@@ -1,21 +1,20 @@
+using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace PbfLite;
 
-public ref partial struct PbfBlockReader
+public partial class PbfStreamReader
 {
-    private static readonly Encoding encoding = Encoding.UTF8;
-
     /// <summary>
-    /// Reads a UTF-8 encoded length-prefixed string from the block.
+    /// Reads a UTF-8 encoded length-prefixed string from the stream.
     /// </summary>
     /// <returns>The decoded string.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadString()
     {
         var buffer = ReadLengthPrefixedBytes();
-        return encoding.GetString(buffer);
+        return Encoding.UTF8.GetString(buffer);
     }
 
     /// <summary>

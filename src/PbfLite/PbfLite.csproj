@@ -5,7 +5,7 @@
     
     <!-- NuGet Package Metadata -->
     <PackageId>PbfLite</PackageId>
-    <Version>0.2.1</Version>
+    <Version>0.3.0</Version>
     <Authors>Lukas Kabrt</Authors>
     <Description>PbfLITE is a low-level .NET Protocol Buffers implementation. It is intended for scenarios where you need fine-grained control over serialization and deserialization without the overhead of reflection, but it requires developers to manually implement the serialization / deserialization logic.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

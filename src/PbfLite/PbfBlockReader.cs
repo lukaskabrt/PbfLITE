@@ -36,20 +36,6 @@ public ref partial struct PbfBlockReader
         };
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static int Zag(uint ziggedValue)
-    {
-        int value = (int)ziggedValue;
-        return (-(value & 0x01)) ^ ((value >> 1) & ~Int32Msb);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static long Zag(ulong ziggedValue)
-    {
-        var value = (long)ziggedValue;
-        return (-(value & 0x01L)) ^ ((value >> 1) & ~Int64Msb);
-    }
-
     /// <summary>
     /// Reads the next field header from the stream and returns the field
     /// number and wire type. If the end of the block is reached the
