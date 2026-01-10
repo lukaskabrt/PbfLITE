@@ -4,53 +4,14 @@ using Xunit;
 
 namespace PbfLite.Tests;
 
-public class PbfStreamReaderTests
+public partial class PbfStreamReaderTests : PbfReaderTests
 {
-    [Theory]
-    [InlineData(new byte[] { 0x08 }, 1)]
-    [InlineData(new byte[] { 0x78 }, 15)]
-    [InlineData(new byte[] { 0x80, 0x01 }, 16)]
-    public void ReadFieldHeader_ReadsFieldNumbers(byte[] data, int fieldNumber)
+    public override (int fieldNumber, WireType wireType) ReadFieldHeader(byte[] data)
     {
-        using (var stream = new MemoryStream(data))
-        {
-            var reader = new PbfStreamReader(stream);
+        using var stream = new MemoryStream(data);
+        var reader = new PbfStreamReader(stream);
 
-            var header = reader.ReadFieldHeader();
-
-            Assert.Equal(fieldNumber, header.fieldNumber);
-        }
-    }
-
-    [Theory]
-    [InlineData(new byte[] { 0x08 }, WireType.VarInt)]
-    [InlineData(new byte[] { 0x09 }, WireType.Fixed64)]
-    [InlineData(new byte[] { 0x0A }, WireType.String)]
-    [InlineData(new byte[] { 0x0D }, WireType.Fixed32)]
-    public void ReadFieldHeader_ReadsWireTypes(byte[] data, WireType wireType)
-    {
-        using (var stream = new MemoryStream(data))
-        {
-            var reader = new PbfStreamReader(stream);
-
-            var header = reader.ReadFieldHeader();
-
-            Assert.Equal(wireType, header.wireType);
-        }
-    }
-
-    [Fact]
-    public void ReadFieldHeader_ReturnsNoneWhenEndOfStreamIsReached()
-    {
-        using (var stream = new MemoryStream(Array.Empty<byte>()))
-        {
-            var reader = new PbfStreamReader(stream);
-
-            var header = reader.ReadFieldHeader();
-
-            Assert.Equal(0, header.fieldNumber);
-            Assert.Equal(WireType.None, header.wireType);
-        }
+        return reader.ReadFieldHeader();
     }
 
     [Theory]
@@ -70,32 +31,6 @@ public class PbfStreamReaderTests
 
             Assert.Equal(expectedPosition, stream.Position);
         }
-    }
-
-    [Theory]
-    [InlineData(0, 0)]
-    [InlineData(1, -1)]
-    [InlineData(2, 1)]
-    [InlineData(4294967294U, 2147483647)]
-    [InlineData(4294967295U, -2147483648)]
-    public void Zag_Decodes32BitZiggedValues(uint encodedNumber, int expectedNumber)
-    {
-        var number = PbfEncoding.Zag(encodedNumber);
-
-        Assert.Equal(expectedNumber, number);
-    }
-
-    [Theory]
-    [InlineData(0, 0)]
-    [InlineData(1, -1)]
-    [InlineData(2, 1)]
-    [InlineData(18446744073709551614UL, 9223372036854775807L)]
-    [InlineData(18446744073709551615UL, -9223372036854775808L)]
-    public void Zag_Decodes64BitZiggedValues(ulong encodedNumber, long expectedNumber)
-    {
-        var number = PbfEncoding.Zag(encodedNumber);
-
-        Assert.Equal(expectedNumber, number);
     }
 
     [Fact]
