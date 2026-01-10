@@ -7,10 +7,9 @@ public partial class PbfStreamReader
 {
     private delegate T ItemReaderDelegate<T>(PbfStreamReader reader);
 
-    private List<T> ReadScalarCollection<T>(WireType wireType, WireType itemWireType, ItemReaderDelegate<T> itemReader)
+
+    private void ReadScalarCollection<T>(WireType wireType, WireType itemWireType, List<T> collection, ItemReaderDelegate<T> itemReader)
     {
-        var collection = new List<T>();
-        
         if (wireType == WireType.String)
         {
             var byteLength = ReadVarInt32();
@@ -35,8 +34,6 @@ public partial class PbfStreamReader
         {
             throw new InvalidOperationException($"Cannot read collection with wire type {wireType}");
         }
-
-        return collection;
     }
 
     private static readonly ItemReaderDelegate<uint> ReadUintDelegate = static (reader) => reader.ReadUint();
@@ -53,71 +50,71 @@ public partial class PbfStreamReader
     /// Reads a collection of unsigned 32-bit integers from the stream.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
-    /// <returns>A list of decoded unsigned 32-bit integers.</returns>
-    public List<uint> ReadUIntCollection(WireType wireType) =>
-        ReadScalarCollection(wireType, WireType.VarInt, ReadUintDelegate);
+    /// <param name="collection">The collection to fill with decoded items.</param>
+    public void ReadUIntCollection(WireType wireType, List<uint> collection) =>
+        ReadScalarCollection(wireType, WireType.VarInt, collection, ReadUintDelegate);
 
     /// <summary>
     /// Reads a collection of unsigned 64-bit integers from the stream.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
-    /// <returns>A list of decoded unsigned 64-bit integers.</returns>
-    public List<ulong> ReadULongCollection(WireType wireType) =>
-        ReadScalarCollection(wireType, WireType.VarInt, ReadULongDelegate);
+    /// <param name="collection">The collection to fill with decoded items.</param>
+    public void ReadULongCollection(WireType wireType, List<ulong> collection) =>
+        ReadScalarCollection(wireType, WireType.VarInt, collection, ReadULongDelegate);
 
     /// <summary>
     /// Reads a collection of signed 32-bit integers from the stream.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
-    /// <returns>A list of decoded signed 32-bit integers.</returns>
-    public List<int> ReadIntCollection(WireType wireType) =>
-        ReadScalarCollection(wireType, WireType.VarInt, ReadIntDelegate);
+    /// <param name="collection">The collection to fill with decoded items.</param>
+    public void ReadIntCollection(WireType wireType, List<int> collection) =>
+        ReadScalarCollection(wireType, WireType.VarInt, collection, ReadIntDelegate);
 
     /// <summary>
     /// Reads a collection of signed 64-bit integers from the stream.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
-    /// <returns>A list of decoded signed 64-bit integers.</returns>
-    public List<long> ReadLongCollection(WireType wireType) =>
-        ReadScalarCollection(wireType, WireType.VarInt, ReadLongDelegate);
+    /// <param name="collection">The collection to fill with decoded items.</param>
+    public void ReadLongCollection(WireType wireType, List<long> collection) =>
+        ReadScalarCollection(wireType, WireType.VarInt, collection, ReadLongDelegate);
 
     /// <summary>
     /// Reads a collection of zigzag-encoded signed 32-bit integers from the stream.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
-    /// <returns>A list of decoded zigzag-encoded signed 32-bit integers.</returns>
-    public List<int> ReadSignedIntCollection(WireType wireType) =>
-        ReadScalarCollection(wireType, WireType.VarInt, ReadSignedIntDelegate);
+    /// <param name="collection">The collection to fill with decoded items.</param>
+    public void ReadSignedIntCollection(WireType wireType, List<int> collection) =>
+        ReadScalarCollection(wireType, WireType.VarInt, collection, ReadSignedIntDelegate);
 
     /// <summary>
     /// Reads a collection of zigzag-encoded signed 64-bit integers from the stream.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
-    /// <returns>A list of decoded zigzag-encoded signed 64-bit integers.</returns>
-    public List<long> ReadSignedLongCollection(WireType wireType) =>
-        ReadScalarCollection(wireType, WireType.VarInt, ReadSignedLongDelegate);
+    /// <param name="collection">The collection to fill with decoded items.</param>
+    public void ReadSignedLongCollection(WireType wireType, List<long> collection) =>
+        ReadScalarCollection(wireType, WireType.VarInt, collection, ReadSignedLongDelegate);
 
     /// <summary>
     /// Reads a collection of boolean values from the stream.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
-    /// <returns>A list of decoded boolean values.</returns>
-    public List<bool> ReadBooleanCollection(WireType wireType) =>
-        ReadScalarCollection(wireType, WireType.VarInt, ReadBooleanDelegate);
+    /// <param name="collection">The collection to fill with decoded items.</param>
+    public void ReadBooleanCollection(WireType wireType, List<bool> collection) =>
+        ReadScalarCollection(wireType, WireType.VarInt, collection, ReadBooleanDelegate);
 
     /// <summary>
     /// Reads a collection of 32-bit floats from the stream.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
-    /// <returns>A list of decoded 32-bit floats.</returns>
-    public List<float> ReadSingleCollection(WireType wireType) =>
-        ReadScalarCollection(wireType, WireType.Fixed32, ReadSingleDelegate);
+    /// <param name="collection">The collection to fill with decoded items.</param>
+    public void ReadSingleCollection(WireType wireType, List<float> collection) =>
+        ReadScalarCollection(wireType, WireType.Fixed32, collection, ReadSingleDelegate);
 
     /// <summary>
     /// Reads a collection of 64-bit floats from the stream.
     /// </summary>
     /// <param name="wireType">The wire type used to encode the collection.</param>
-    /// <returns>A list of decoded 64-bit floats.</returns>
-    public List<double> ReadDoubleCollection(WireType wireType) =>
-        ReadScalarCollection(wireType, WireType.Fixed64, ReadDoubleDelegate);
+    /// <param name="collection">The collection to fill with decoded items.</param>
+    public void ReadDoubleCollection(WireType wireType, List<double> collection) =>
+        ReadScalarCollection(wireType, WireType.Fixed64, collection, ReadDoubleDelegate);
 }

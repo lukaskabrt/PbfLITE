@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Xunit;
 
@@ -133,7 +134,8 @@ public class PbfBlockReaderStreamReaderRoundTripTests
         using (var stream = new MemoryStream(writer.Block.ToArray()))
         {
             var streamReader = new PbfStreamReader(stream);
-            var streamItems = streamReader.ReadUIntCollection(WireType.String);
+            var streamItems = new List<uint>();
+            streamReader.ReadUIntCollection(WireType.String, streamItems);
 
             // Verify both readers get the same collection data
             Assert.Equal(blockItems.Length, streamItems.Count);

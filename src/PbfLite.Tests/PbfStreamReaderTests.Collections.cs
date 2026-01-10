@@ -17,8 +17,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<uint>();
 
-            var items = reader.ReadUIntCollection(WireType.VarInt);
+            reader.ReadUIntCollection(WireType.VarInt, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -35,8 +36,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<uint>();
 
-            var items = reader.ReadUIntCollection(WireType.String);
+            reader.ReadUIntCollection(WireType.String, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -51,8 +53,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<ulong>();
 
-            var items = reader.ReadULongCollection(WireType.VarInt);
+            reader.ReadULongCollection(WireType.VarInt, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -66,8 +69,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<ulong>();
 
-            var items = reader.ReadULongCollection(WireType.String);
+            reader.ReadULongCollection(WireType.String, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -82,8 +86,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<int>();
 
-            var items = reader.ReadIntCollection(WireType.VarInt);
+            reader.ReadIntCollection(WireType.VarInt, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -98,8 +103,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<int>();
 
-            var items = reader.ReadIntCollection(WireType.String);
+            reader.ReadIntCollection(WireType.String, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -114,8 +120,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<long>();
 
-            var items = reader.ReadLongCollection(WireType.VarInt);
+            reader.ReadLongCollection(WireType.VarInt, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -129,8 +136,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<long>();
 
-            var items = reader.ReadLongCollection(WireType.String);
+            reader.ReadLongCollection(WireType.String, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -145,8 +153,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<int>();
 
-            var items = reader.ReadSignedIntCollection(WireType.VarInt);
+            reader.ReadSignedIntCollection(WireType.VarInt, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -161,8 +170,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<int>();
 
-            var items = reader.ReadSignedIntCollection(WireType.String);
+            reader.ReadSignedIntCollection(WireType.String, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -177,8 +187,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<long>();
 
-            var items = reader.ReadSignedLongCollection(WireType.VarInt);
+            reader.ReadSignedLongCollection(WireType.VarInt, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -193,8 +204,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<long>();
 
-            var items = reader.ReadSignedLongCollection(WireType.String);
+            reader.ReadSignedLongCollection(WireType.String, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -208,8 +220,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<bool>();
 
-            var items = reader.ReadBooleanCollection(WireType.VarInt);
+            reader.ReadBooleanCollection(WireType.VarInt, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -223,8 +236,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<bool>();
 
-            var items = reader.ReadBooleanCollection(WireType.String);
+            reader.ReadBooleanCollection(WireType.String, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -238,8 +252,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<float>();
 
-            var items = reader.ReadSingleCollection(WireType.Fixed32);
+            reader.ReadSingleCollection(WireType.Fixed32, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -253,8 +268,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<float>();
 
-            var items = reader.ReadSingleCollection(WireType.String);
+            reader.ReadSingleCollection(WireType.String, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -268,8 +284,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<double>();
 
-            var items = reader.ReadDoubleCollection(WireType.Fixed64);
+            reader.ReadDoubleCollection(WireType.Fixed64, items);
 
             Assert.Equal(expectedItems, items);
         }
@@ -283,8 +300,9 @@ public class PbfStreamReaderTests_Collections
         using (var stream = new MemoryStream(data))
         {
             var reader = new PbfStreamReader(stream);
+            var items = new List<double>();
 
-            var items = reader.ReadDoubleCollection(WireType.String);
+            reader.ReadDoubleCollection(WireType.String, items);
 
             Assert.Equal(expectedItems, items);
         }
