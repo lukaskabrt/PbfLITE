@@ -7,7 +7,6 @@ public partial class PbfStreamReader
 {
     private delegate T ItemReaderDelegate<T>(PbfStreamReader reader);
 
-
     private void ReadScalarCollection<T>(WireType wireType, WireType itemWireType, List<T> collection, ItemReaderDelegate<T> itemReader)
     {
         if (wireType == WireType.String)

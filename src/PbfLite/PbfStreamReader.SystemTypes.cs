@@ -6,8 +6,6 @@ namespace PbfLite;
 
 public partial class PbfStreamReader
 {
-    private static readonly Encoding encoding = Encoding.UTF8;
-
     /// <summary>
     /// Reads a UTF-8 encoded length-prefixed string from the stream.
     /// </summary>
@@ -16,7 +14,7 @@ public partial class PbfStreamReader
     public string ReadString()
     {
         var buffer = ReadLengthPrefixedBytes();
-        return encoding.GetString(buffer);
+        return Encoding.UTF8.GetString(buffer);
     }
 
     /// <summary>
