@@ -330,12 +330,4 @@ public partial class PbfStreamReader
             remaining -= toRead;
         }
     }
-
-    /// <summary>
-    /// Closes the stream and releases resources.
-    /// </summary>
-    public void Dispose()
-    {
-        _stream?.Dispose();
-    }
 }
