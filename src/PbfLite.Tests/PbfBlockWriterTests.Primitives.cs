@@ -97,5 +97,35 @@ public partial class PbfBlockWriterTests
 
             SpanAssert.Equal<byte>(expected, writer.Block);
         }
+
+        [Fact]
+        public void WriteRaw_WritesDataAndAdvancesPosition()
+        {
+            var data = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+            var buffer = new byte[10];
+            var writer = PbfBlockWriter.Create(buffer);
+
+            writer.WriteRaw(data);
+
+            SpanAssert.Equal<byte>(data, writer.Block);
+            Assert.Equal(5, writer.Position);
+        }
+
+        [Fact]
+        public void WriteRaw_WritesMultipleSequences()
+        {
+            var data1 = new byte[] { 0xAA, 0xBB };
+            var data2 = new byte[] { 0xCC, 0xDD, 0xEE };
+            var expected = new byte[] { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE };
+
+            var buffer = new byte[10];
+            var writer = PbfBlockWriter.Create(buffer);
+
+            writer.WriteRaw(data1);
+            writer.WriteRaw(data2);
+
+            SpanAssert.Equal<byte>(expected, writer.Block);
+            Assert.Equal(5, writer.Position);
+        }
     }
 }
