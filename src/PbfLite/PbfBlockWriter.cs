@@ -195,7 +195,7 @@ public ref partial struct PbfBlockWriter
     }
 }
 
-public record struct LengthPrefixedBlock {     
+public record struct LengthPrefixedBlock {
     public int LengthPosition;
     public int ContentPosition;
 }
