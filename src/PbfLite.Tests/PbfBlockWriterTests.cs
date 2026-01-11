@@ -1,3 +1,4 @@
+using System.Linq;
 using Xunit;
 
 namespace PbfLite.Tests;

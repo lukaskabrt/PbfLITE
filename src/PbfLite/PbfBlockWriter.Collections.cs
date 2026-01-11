@@ -5,33 +5,17 @@ namespace PbfLite;
 public ref partial struct PbfBlockWriter
 {
     private delegate void ItemWriterDelegate<T>(ref PbfBlockWriter writer, T item);
-    
+
     private void WriteScalarCollection<T>(ReadOnlySpan<T> items, ItemWriterDelegate<T> itemWriter)
     {
-        var lengthPosition = _position;
-
-        // Placeholder for length that will be overwritten
-        WriteVarInt32(0); 
+        var block = StartLengthPrefixedBlock(items.Length);
 
         foreach (var item in items)
         {
             itemWriter(ref this, item);
         }
 
-        var contentLength = _position - lengthPosition - 1;
-        var contentLengthBytesCount = GetVarIntBytesCount((uint)contentLength);
-
-        if (contentLengthBytesCount > 1)
-        {
-            var content = _block.Slice(lengthPosition + 1, contentLength);
-            var newContentStart = lengthPosition + contentLengthBytesCount;
-
-            content.CopyTo(_block.Slice(newContentStart));
-            
-            _position = newContentStart + contentLength;
-        }
-
-        WriteVarInt32At(lengthPosition, (uint)contentLength);
+        FinalizeLengthPrefixedBlock(block);
     }
 
     private void WriteScalarCollection<T>(ReadOnlySpan<T> items, ItemWriterDelegate<T> itemWriter, int contentLengthBytes)
