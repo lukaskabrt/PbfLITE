@@ -1,4 +1,5 @@
 using BenchmarkDotNet.Attributes;
+using System;
 using System.Linq;
 
 namespace PbfLite.Benchmark;
@@ -13,7 +14,7 @@ public class PbfBlockWriterCollectionsBenchmarks
     public int WriteSmallSingleCollection()
     {
         var writer = PbfBlockWriter.Create(buffer);
-        writer.WriteSingleCollection(SingleValuesSmall);
+        writer.WriteSingleCollection(SingleValuesSmall.AsSpan());
         return writer.Position;
     }
 
@@ -21,7 +22,7 @@ public class PbfBlockWriterCollectionsBenchmarks
     public int WriteLargeSingleCollection()
     {
         var writer = PbfBlockWriter.Create(buffer);
-        writer.WriteSingleCollection(SingleValuesLarge);
+        writer.WriteSingleCollection(SingleValuesLarge.AsSpan());
         return writer.Position;
     }
 }

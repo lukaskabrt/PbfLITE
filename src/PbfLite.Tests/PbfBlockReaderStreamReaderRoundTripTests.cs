@@ -124,7 +124,7 @@ public class PbfBlockReaderStreamReaderRoundTripTests
 
         // Write a collection
         uint[] testData = { 10, 20, 30, 40, 50 };
-        writer.WriteUIntCollection(testData);
+        writer.WriteUIntCollection(testData.AsSpan());
 
         // Read with BlockReader
         var blockReader = PbfBlockReader.Create(writer.Block);
