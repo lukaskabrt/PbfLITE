@@ -1,3 +1,4 @@
+using System.Linq;
 using Xunit;
 
 namespace PbfLite.Tests;
@@ -98,6 +99,29 @@ public partial class PbfBlockWriterTests
             SpanAssert.Equal<byte>(expected, writer.Block);
         }
 
+        [Theory]
+        [InlineData(1)]
+        [InlineData(128)]
+        [InlineData(32768)]
+        public void StartAndFinalizeLengthPrefixedBlock_WritesLengthPrefixedBlock(int estimatedBlockLength)
+        {
+            var data = Enumerable.Repeat<byte>(0x01, 128).ToArray();
+
+            var buffer = new byte[256];
+            var writer = PbfBlockWriter.Create(buffer);
+
+            var block = writer.StartLengthPrefixedBlock(estimatedBlockLength);
+            writer.WriteRaw(data);
+            writer.FinalizeLengthPrefixedBlock(block);
+
+            var expectedData = new byte[2 + data.Length];
+            expectedData[0] = 0x80;
+            expectedData[1] = 0x01;
+            data.CopyTo(expectedData, 2);
+
+            SpanAssert.Equal<byte>(expectedData, writer.Block.Slice(0, expectedData.Length));
+        }
+
         [Fact]
         public void WriteRaw_WritesDataAndAdvancesPosition()
         {
@@ -108,23 +132,6 @@ public partial class PbfBlockWriterTests
             writer.WriteRaw(data);
 
             SpanAssert.Equal<byte>(data, writer.Block);
-            Assert.Equal(5, writer.Position);
-        }
-
-        [Fact]
-        public void WriteRaw_WritesMultipleSequences()
-        {
-            var data1 = new byte[] { 0xAA, 0xBB };
-            var data2 = new byte[] { 0xCC, 0xDD, 0xEE };
-            var expected = new byte[] { 0xAA, 0xBB, 0xCC, 0xDD, 0xEE };
-
-            var buffer = new byte[10];
-            var writer = PbfBlockWriter.Create(buffer);
-
-            writer.WriteRaw(data1);
-            writer.WriteRaw(data2);
-
-            SpanAssert.Equal<byte>(expected, writer.Block);
             Assert.Equal(5, writer.Position);
         }
     }

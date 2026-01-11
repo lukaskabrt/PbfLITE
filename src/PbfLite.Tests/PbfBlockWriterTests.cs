@@ -63,27 +63,4 @@ public partial class PbfBlockWriterTests
 
         Assert.Equal(expectedBytesCount, bytesCount);
     }
-
-    [Theory]
-    [InlineData(1)]
-    [InlineData(128)]
-    [InlineData(32768)]
-    public void WritesLengthPrefixedBlock(int estimatedBlockLength)
-    {
-        var data = Enumerable.Repeat<byte>(0x01, 128).ToArray();
-
-        var buffer = new byte[256];
-        var writer = PbfBlockWriter.Create(buffer);
-
-        var block = writer.StartLengthPrefixedBlock(estimatedBlockLength);
-        writer.WriteRaw(data);
-        writer.FinalizeLengthPrefixedBlock(block);
-
-        var expectedData = new byte[2 + data.Length];
-        expectedData[0] = 0x80;
-        expectedData[1] = 0x01;
-        data.CopyTo(expectedData, 2);
-
-        SpanAssert.Equal<byte>(expectedData, writer.Block.Slice(0, expectedData.Length));
-    }
 }
