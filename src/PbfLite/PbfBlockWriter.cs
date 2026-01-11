@@ -163,11 +163,7 @@ public ref partial struct PbfBlockWriter
         var contentPosition = lengthPosition + GetVarIntBytesCount((uint)estimatedBlockLength);
         _position = contentPosition;
 
-        return new LengthPrefixedBlock
-        {
-            LengthPosition = lengthPosition,
-            ContentPosition = contentPosition
-        };
+        return new LengthPrefixedBlock(lengthPosition, contentPosition);
     }
 
     /// <summary>
@@ -195,7 +191,4 @@ public ref partial struct PbfBlockWriter
     }
 }
 
-public record struct LengthPrefixedBlock {
-    public int LengthPosition;
-    public int ContentPosition;
-}
+public record struct LengthPrefixedBlock(int LengthPosition, int ContentPosition);
