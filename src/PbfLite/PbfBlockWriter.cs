@@ -139,4 +139,63 @@ public ref partial struct PbfBlockWriter
         data.CopyTo(_block[_position..]);
         _position += data.Length;
     }
+
+    /// <summary>
+    /// Writes the specified sequence of bytes directly to the underlying buffer at the current position.
+    /// </summary>
+    /// <param name="data">The span of bytes to write to the buffer.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteRaw(ReadOnlySpan<byte> data)
+    {
+        data.CopyTo(_block[_position..]);
+        _position += data.Length;
+    }
+
+    /// <summary>
+    /// Starts a length-prefixed block with an estimated block length.
+    /// </summary>
+    /// <param name="estimatedBlockLength">The estimated length of the block content.</param>
+    /// <returns>A LengthPrefixedBlock struct representing the block.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public LengthPrefixedBlock StartLengthPrefixedBlock(int estimatedBlockLength)
+    {
+        var lengthPosition = _position;
+        var contentPosition = lengthPosition + GetVarIntBytesCount((uint)estimatedBlockLength);
+        _position = contentPosition;
+
+        return new LengthPrefixedBlock
+        {
+            LengthPosition = lengthPosition,
+            ContentPosition = contentPosition
+        };
+    }
+
+    /// <summary>
+    /// Finalizes a length-prefixed block by calculating its actual length and writing it at the appropriate position.
+    /// </summary>
+    /// <param name="block">The LengthPrefixedBlock to finalize.</param>
+    public void FinalizeLengthPrefixedBlock(LengthPrefixedBlock block)
+    {
+        var estimatedLengthBytesCount = block.ContentPosition - block.LengthPosition;
+
+        var contentLength = _position - block.ContentPosition;
+        var contentLengthBytesCount = GetVarIntBytesCount((uint)contentLength);
+
+        if (contentLengthBytesCount != estimatedLengthBytesCount)
+        {
+            var content = _block.Slice(block.ContentPosition, contentLength);
+            var newContentStart = block.LengthPosition + contentLengthBytesCount;
+
+            content.CopyTo(_block.Slice(newContentStart));
+
+            _position = newContentStart + contentLength;
+        }
+
+        WriteVarInt32At(block.LengthPosition, (uint)contentLength);
+    }
+}
+
+public record struct LengthPrefixedBlock {     
+    public int LengthPosition;
+    public int ContentPosition;
 }
