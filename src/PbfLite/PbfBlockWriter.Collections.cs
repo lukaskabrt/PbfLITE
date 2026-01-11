@@ -113,6 +113,7 @@ public ref partial struct PbfBlockWriter
     /// <summary>
     /// Writes a collection of unsigned 64-bit integers as a length-prefixed packed field.
     /// </summary>
+    /// <param name="items">The items to write.</param>
     public void WriteULongCollection(IEnumerable<ulong> items)
     {
         WriteScalarCollection(items, WriteULongDelegate);
@@ -129,6 +130,7 @@ public ref partial struct PbfBlockWriter
     /// <summary>
     /// Writes a collection of 32-bit integers as a length-prefixed packed field.
     /// </summary>
+    /// <param name="items">The items to write.</param>
     public void WriteIntCollection(IEnumerable<int> items)
     {
         WriteScalarCollection(items, WriteIntDelegate);
@@ -145,6 +147,7 @@ public ref partial struct PbfBlockWriter
     /// <summary>
     /// Writes a collection of 64-bit integers as a length-prefixed packed field.
     /// </summary>
+    /// <param name="items">The items to write.</param>
     public void WriteLongCollection(IEnumerable<long> items)
     {
         WriteScalarCollection(items, WriteLongDelegate);
@@ -161,6 +164,7 @@ public ref partial struct PbfBlockWriter
     /// <summary>
     /// Writes a collection of zigzag-encoded signed 32-bit integers as a packed field.
     /// </summary>
+    /// <param name="items">The items to write.</param>
     public void WriteSignedIntCollection(IEnumerable<int> items)
     {
         WriteScalarCollection(items, WriteSignedIntDelegate);
@@ -177,6 +181,7 @@ public ref partial struct PbfBlockWriter
     /// <summary>
     /// Writes a collection of zigzag-encoded signed 64-bit integers as a packed field.
     /// </summary>
+    /// <param name="items">The items to write.</param>
     public void WriteSignedLongCollection(IEnumerable<long> items)
     {
         WriteScalarCollection(items, WriteSignedLongDelegate);
@@ -193,6 +198,7 @@ public ref partial struct PbfBlockWriter
     /// <summary>
     /// Writes a collection of boolean values as a length-prefixed packed field.
     /// </summary>
+    /// <param name="items">The items to write.</param>
     public void WriteBooleanCollection(IEnumerable<bool> items)
     {
         WriteScalarCollection(items, WriteBooleanDelegate, count => count);
@@ -209,6 +215,7 @@ public ref partial struct PbfBlockWriter
     /// <summary>
     /// Writes a collection of 32-bit floats as a length-prefixed packed field.
     /// </summary>
+    /// <param name="items">The items to write.</param>
     public void WriteSingleCollection(IEnumerable<float> items)
     {
         WriteScalarCollection(items, WriteSingleDelegate, count => count * 4);
@@ -224,6 +231,7 @@ public ref partial struct PbfBlockWriter
 
     /// <summary>
     /// Writes a collection of 64-bit floats as a length-prefixed packed field.
+    /// <param name="items">The items to write.</param>
     /// </summary>
     public void WriteDoubleCollection(IEnumerable<double> items)
     {
