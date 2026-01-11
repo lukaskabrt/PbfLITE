@@ -13,7 +13,7 @@ public class CollectionsRoundTripTests
 
         // Write
         var writer = PbfBlockWriter.Create(buffer);
-        writer.WriteUIntCollection(originalData);
+        writer.WriteUIntCollection(originalData.AsSpan());
 
         // Read
         var reader = PbfBlockReader.Create(writer.Block);
